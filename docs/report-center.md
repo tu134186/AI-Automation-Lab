@@ -33,3 +33,12 @@ tests.log：实际测试输出；
 AI-Automation-Lab-COMMIT-source.zip：当前 Commit 对应完整源码。
 
 当前独立报告分支只在相关源码变化时触发 Linux 检查，同分支新任务取消旧任务。主分支不变，无需 OpenAI API。
+
+## 交付一致性验证
+打包源码后、上传前执行 scripts/validate_delivery.py。
+检查报告 Commit、重算本次测试统计、历史统计与待处理清单，逐字重建 Markdown 和 HTML 对照 JSON，检查源码 ZIP CRC 及 git archive 内嵌的完整 Commit。
+通过后生成 delivery.md、manifest.json 和 SHA256SUMS.txt，记录每个文件的字节数与 SHA-256；再次独立校验全部文件和标识。
+校验失败会使任务失败，摘要明确标注下载仅供排查，不把文件上传成功冒充交付验证成功。
+离线复核：python3 scripts/validate_delivery.py reports --commit FULL_COMMIT --run-id RUN_ID --verify。
+需要先解压完整源码 ZIP，然后用其中脚本指向报告文件夹；脚本仅使用 Python 标准库。
+SHA-256 校验用于发现损坏或错包，不是数字签名；交付一致性通过也不表示历史任务没有未解决失败。

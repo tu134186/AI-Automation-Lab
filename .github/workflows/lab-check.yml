@@ -44,6 +44,23 @@ jobs:
       - name: Package exact source
         if: always()
         run: git archive --format=zip -o "reports/AI-Automation-Lab-${GITHUB_SHA:0:7}-source.zip" HEAD
+      - name: Validate delivery data and source identity
+        if: always()
+        id: delivery
+        run: |
+          python3 scripts/validate_delivery.py reports
+          python3 scripts/validate_delivery.py reports --verify
+      - name: Publish delivery validation result
+        if: always()
+        env:
+          DELIVERY_OUTCOME: ${{ steps.delivery.outcome }}
+        run: |
+          if [ "$DELIVERY_OUTCOME" = "success" ]; then
+            cat reports/delivery.md >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo '## 交付校验未通过' >> "$GITHUB_STEP_SUMMARY"
+            echo '下载内容仅供排查，请查看校验步骤日志；不能视为已验证交付包。' >> "$GITHUB_STEP_SUMMARY"
+          fi
       - name: Upload reports, test log and source
         if: always()
         id: upload
