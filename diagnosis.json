@@ -1,7 +1,8 @@
 {
-  "scope": "覆盖本次已扫描的 17 次历史运行（最多 100 次）；不代表整个仓库全部故障。",
+  "scope": "覆盖本次已扫描的 18 次历史运行（最多 100 次）；不代表整个仓库全部故障。",
   "evidence_note": "排查方向依据失败步骤名称，不是已确认根因；未自动重试或修改历史任务。",
-  "items": [
+  "items": [],
+  "paused": [
     {
       "name": "AI unattended repair",
       "branch": "test/bugfix-proof-20261029",
@@ -23,7 +24,9 @@
       ],
       "notes": [
         "本次只查询最近 5 个已完成任务的产物。"
-      ]
+      ],
+      "pause_reason": "用户暂不开通付费 API，保留实验源码和失败证据，暂停继续接入。",
+      "original_conclusion": "failure"
     }
   ]
 }

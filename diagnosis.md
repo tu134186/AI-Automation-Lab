@@ -1,13 +1,14 @@
 ## 待处理清单
 
-覆盖本次已扫描的 17 次历史运行（最多 100 次）；不代表整个仓库全部故障。
+覆盖本次已扫描的 18 次历史运行（最多 100 次）；不代表整个仓库全部故障。
 
 排查方向依据失败步骤名称，不是已确认根因；未自动重试或修改历史任务。
 
-### 失败待处理 · AI unattended repair
+当前需处理清单为空；已暂停实验单列，未覆盖的旧任务状态未知。
+## 已暂停实验
 
-- 分支：test/bugfix-proof-20261029
-- 排查方向：模型授权检查未通过；核对原日志中的授权信息。
-- [查看证据任务](https://github.com/tu134186/AI-Automation-Lab/actions/runs/40893017732)
-- <a href="https://github.com/tu134186/AI-Automation-Lab/actions/runs/40893017732/job/123514563636">日志：generate</a>
+暂停不代表通过或已修复；原失败结果仍保留。
 
+- AI unattended repair：用户暂不开通付费 API，保留实验源码和失败证据，暂停继续接入。
+  原结论：failure
+  [原任务证据](https://github.com/tu134186/AI-Automation-Lab/actions/runs/40893017732)

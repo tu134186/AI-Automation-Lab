@@ -2,14 +2,14 @@
 
 **全部通过**
 
-通过：63 · 失败：0 · 进行中：0 · 跳过：0
+通过：70 · 失败：0 · 进行中：0 · 跳过：0
 
 - 仓库：tu134186/AI-Automation-Lab
 - 分支：feature/report-center-20261029
-- Commit：ec143c000b79ca7477d3f01077987c2a5f85c558
+- Commit：c42c834bb23a0b93b095cefee5f5a8d08f3a8f0f
 
-<a href="https://github.com/tu134186/AI-Automation-Lab/actions/runs/40903598703">任务记录与报告下载</a>
-<a href="https://github.com/tu134186/AI-Automation-Lab/commit/ec143c000b79ca7477d3f01077987c2a5f85c558">本次修改</a>
+<a href="https://github.com/tu134186/AI-Automation-Lab/actions/runs/40904236520">任务记录与报告下载</a>
+<a href="https://github.com/tu134186/AI-Automation-Lab/commit/c42c834bb23a0b93b095cefee5f5a8d08f3a8f0f">本次修改</a>
 
 | 测试 | 状态 | 原因／详情 |
 | --- | --- | --- |
@@ -54,6 +54,13 @@
 | test&#95;report&#95;center.CenterTests.test&#95;states | 通过 |  |
 | test&#95;report&#95;collector.CollectorTests.test&#95;failure&#95;skip&#95;and&#95;error&#95;are&#95;recorded | 通过 |  |
 | test&#95;report&#95;collector.CollectorTests.test&#95;subtest&#95;failure&#95;does&#95;not&#95;pass&#95;parent | 通过 |  |
+| test&#95;report&#95;policy.PolicyTests.test&#95;invalid&#95;or&#95;duplicate&#95;rules&#95;rejected | 通过 |  |
+| test&#95;report&#95;policy.PolicyTests.test&#95;missing&#95;policy&#95;never&#95;hides&#95;failure | 通过 |  |
+| test&#95;report&#95;policy.PolicyTests.test&#95;pause&#95;does&#95;not&#95;apply&#95;to&#95;other&#95;branch&#95;or&#95;workflow | 通过 |  |
+| test&#95;report&#95;policy.PolicyTests.test&#95;pause&#95;does&#95;not&#95;inflate&#95;success&#95;rate | 通过 |  |
+| test&#95;report&#95;policy.PolicyTests.test&#95;pause&#95;preserves&#95;raw&#95;failure&#95;and&#95;evidence | 通过 |  |
+| test&#95;report&#95;policy.PolicyTests.test&#95;reason&#95;is&#95;escaped | 通过 |  |
+| test&#95;report&#95;policy.PolicyTests.test&#95;removing&#95;pause&#95;restores&#95;active&#95;item | 通过 |  |
 | test&#95;run&#95;history.HistoryTests.test&#95;bounds&#95;and&#95;current&#95;run&#95;excluded | 通过 |  |
 | test&#95;run&#95;history.HistoryTests.test&#95;empty&#95;history&#95;does&#95;not&#95;claim&#95;pass | 通过 |  |
 | test&#95;run&#95;history.HistoryTests.test&#95;escapes&#95;remote&#95;content | 通过 |  |
@@ -79,6 +86,6 @@
 
 ## 修改记录
 
-feat: mobile report overview with Beijing time and clear snapshot freshness<br><br> .github/workflows/buildmate.yml  &#124;  95 ++++++++++++++++++<br> .github/workflows/lab-check.yml  &#124; 102 +++++++++++++++++++<br> AGENTS.md                        &#124;  21 ++++<br> README.md                        &#124;  72 ++++++++++++++<br> build-config.json                &#124;   1 +<br> docs/development-test.md         &#124;  12 +++<br> docs/report-center.md            &#124;  60 +++++++++++<br> docs/verification-2026-10-29.md  &#124;  26 +++++<br> examples/report.html             &#124;  23 +++++<br> examples/report.md               &#124;  12 +++<br> examples/tasks.json              &#124;   4 +<br> lab&#95;report.py                    &#124; 112 +++++++++++++++++++++<br> report&#95;center.py                 &#124; 142 ++++++++++++++++++++++++++<br> scripts/publish&#95;report.cjs       &#124; 134 +++++++++++++++++++++++++<br> scripts/run&#95;history.py           &#124; 210 +++++++++++++++++++++++++++++++++++++++<br> scripts/run&#95;report.py            &#124;  67 +++++++++++++<br> scripts/self&#95;check.py            &#124;  14 +++<br> scripts/test&#95;publish&#95;report.cjs  &#124; 101 +++++++++++++++++++<br> scripts/triage.py                &#124;  84 ++++++++++++++++<br> scripts/validate&#95;delivery.py     &#124; 134 +++++++++++++++++++++++++<br> tests/test&#95;delivery.py           &#124;  91 +++++++++++++++++<br> tests/test&#95;history&#95;comparison.py &#124;  38 +++++++<br> tests/test&#95;lab&#95;report.py         &#124; 134 +++++++++++++++++++++++++<br> tests/test&#95;publish&#95;snapshot.py   &#124;  12 +++<br> tests/test&#95;report&#95;center.py      &#124;  50 ++++++++++<br> tests/test&#95;report&#95;collector.py   &#124;  27 +++++<br> tests/test&#95;run&#95;history.py        &#124;  64 ++++++++++++<br> tests/test&#95;triage.py             &#124;  54 ++++++++++<br> tests/test&#95;wider&#95;history.py      &#124;  48 +++++++++<br> 29 files changed, 1944 insertions(+)
+feat: separate paused AI experiments from actionable failures without rewriting evidence<br><br> .github/workflows/buildmate.yml  &#124;  95 +++++++++++++++++<br> .github/workflows/lab-check.yml  &#124; 102 +++++++++++++++++++<br> AGENTS.md                        &#124;  21 ++++<br> README.md                        &#124;  74 ++++++++++++++<br> build-config.json                &#124;   1 +<br> docs/development-test.md         &#124;  12 +++<br> docs/report-center.md            &#124;  67 ++++++++++++<br> docs/verification-2026-10-29.md  &#124;  26 +++++<br> examples/report.html             &#124;  23 +++++<br> examples/report.md               &#124;  12 +++<br> examples/tasks.json              &#124;   4 +<br> lab&#95;report.py                    &#124; 112 ++++++++++++++++++++<br> report&#95;center.py                 &#124; 142 ++++++++++++++++++++++++++<br> report&#95;policy.json               &#124;  11 ++<br> scripts/publish&#95;report.cjs       &#124; 145 ++++++++++++++++++++++++++<br> scripts/report&#95;policy.py         &#124;  30 ++++++<br> scripts/run&#95;history.py           &#124; 214 +++++++++++++++++++++++++++++++++++++++<br> scripts/run&#95;report.py            &#124;  67 ++++++++++++<br> scripts/self&#95;check.py            &#124;  14 +++<br> scripts/test&#95;publish&#95;report.cjs  &#124; 106 +++++++++++++++++++<br> scripts/triage.py                &#124; 106 +++++++++++++++++++<br> scripts/validate&#95;delivery.py     &#124; 138 +++++++++++++++++++++++++<br> tests/test&#95;delivery.py           &#124;  93 +++++++++++++++++<br> tests/test&#95;history&#95;comparison.py &#124;  38 +++++++<br> tests/test&#95;lab&#95;report.py         &#124; 134 ++++++++++++++++++++++++<br> tests/test&#95;publish&#95;snapshot.py   &#124;  12 +++<br> tests/test&#95;report&#95;center.py      &#124;  50 +++++++++<br> tests/test&#95;report&#95;collector.py   &#124;  27 +++++<br> tests/test&#95;report&#95;policy.py      &#124;  53 ++++++++++<br> tests/test&#95;run&#95;history.py        &#124;  64 ++++++++++++<br> tests/test&#95;triage.py             &#124;  54 ++++++++++<br> tests/test&#95;wider&#95;history.py      &#124;  48 +++++++++<br> 32 files changed, 2095 insertions(+)
 
 报告来自本次实际测试。跳过不计为通过；下载文件位于任务页底部 Artifacts。

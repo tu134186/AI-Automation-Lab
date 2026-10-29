@@ -38,6 +38,13 @@ test_offline_mobile (test_report_center.CenterTests.test_offline_mobile) ... ok
 test_states (test_report_center.CenterTests.test_states) ... ok
 test_failure_skip_and_error_are_recorded (test_report_collector.CollectorTests.test_failure_skip_and_error_are_recorded) ... ok
 test_subtest_failure_does_not_pass_parent (test_report_collector.CollectorTests.test_subtest_failure_does_not_pass_parent) ... ok
+test_invalid_or_duplicate_rules_rejected (test_report_policy.PolicyTests.test_invalid_or_duplicate_rules_rejected) ... ok
+test_missing_policy_never_hides_failure (test_report_policy.PolicyTests.test_missing_policy_never_hides_failure) ... ok
+test_pause_does_not_apply_to_other_branch_or_workflow (test_report_policy.PolicyTests.test_pause_does_not_apply_to_other_branch_or_workflow) ... ok
+test_pause_does_not_inflate_success_rate (test_report_policy.PolicyTests.test_pause_does_not_inflate_success_rate) ... ok
+test_pause_preserves_raw_failure_and_evidence (test_report_policy.PolicyTests.test_pause_preserves_raw_failure_and_evidence) ... ok
+test_reason_is_escaped (test_report_policy.PolicyTests.test_reason_is_escaped) ... ok
+test_removing_pause_restores_active_item (test_report_policy.PolicyTests.test_removing_pause_restores_active_item) ... ok
 test_bounds_and_current_run_excluded (test_run_history.HistoryTests.test_bounds_and_current_run_excluded) ... ok
 test_empty_history_does_not_claim_pass (test_run_history.HistoryTests.test_empty_history_does_not_claim_pass) ... ok
 test_escapes_remote_content (test_run_history.HistoryTests.test_escapes_remote_content) ... ok
@@ -62,6 +69,6 @@ test_scan_bounded_and_current_excluded (test_wider_history.WiderHistoryTests.tes
 test_unresolved_failure_gets_priority_over_resolved_history (test_wider_history.WiderHistoryTests.test_unresolved_failure_gets_priority_over_resolved_history) ... ok
 
 ----------------------------------------------------------------------
-Ran 62 tests in 1.014s
+Ran 69 tests in 0.874s
 
 OK

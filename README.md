@@ -4,14 +4,15 @@
 
 | 项目 | 结果 |
 | --- | --- |
-| 本次自动检查 | 全部通过，共 63 项 |
-| 历史待处理 | 1 项，独立于本次检查结果 |
-| 历史扫描 | 17 次 |
-| 快照更新时间 | 2026/10/29 23:38:47（北京时间） |
+| 本次自动检查 | 全部通过，共 70 项 |
+| 历史待处理 | 0 项，独立于本次检查结果 |
+| 已暂停实验 | 1 项，保留原结论，不计为修复 |
+| 历史扫描 | 18 次 |
+| 快照更新时间 | 2026/10/29 23:42:36（北京时间） |
 
-源码 Commit：ec143c000b79ca7477d3f01077987c2a5f85c558
+源码 Commit：c42c834bb23a0b93b095cefee5f5a8d08f3a8f0f
 
-[本快照对应任务](https://github.com/tu134186/AI-Automation-Lab/actions/runs/40903598703) · [核验说明](delivery.md)
+[本快照对应任务](https://github.com/tu134186/AI-Automation-Lab/actions/runs/40904236520) · [核验说明](delivery.md)
 
 ## 当前任务状态
 
@@ -21,16 +22,20 @@
 
 ## 需要关注
 
-- **失败待处理：AI unattended repair**（test/bugfix-proof-20261029）
-  模型授权检查未通过；核对原日志中的授权信息。
-  [查看证据任务](https://github.com/tu134186/AI-Automation-Lab/actions/runs/40893017732)
+本次扫描未发现待处理；不代表未扫描的旧任务全部正常。
+
+## 已暂停实验
+
+- **AI unattended repair**：用户暂不开通付费 API，保留实验源码和失败证据，暂停继续接入。
+  原始结果：failure，暂停不代表通过或已修复。
+  [原任务证据](https://github.com/tu134186/AI-Automation-Lab/actions/runs/40893017732)
 
 ## 查看与下载
 
 - [完整中文报告](report.md)
 - [待处理清单](diagnosis.md)
 - [历史任务与产物入口](history.md)
-- [下载对应源码 ZIP](AI-Automation-Lab-ec143c0-source.zip)
+- [下载对应源码 ZIP](AI-Automation-Lab-c42c834-source.zip)
 - [文件校验清单](SHA256SUMS.txt)
 
 本分支保存快照，不受 Actions 产物保留期限制；删除仓库、分支或文件后仍会丢失。主分支未因报告发布而修改。
