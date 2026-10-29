@@ -36,6 +36,25 @@ function validateSnapshot(folder, sha, runId) {
   return buffers;
 }
 
+function validateBundle(folder, sha) {
+  if (!/^[0-9a-f]{40}$/.test(sha)) throw new Error('Invalid bundle Commit');
+  const name = 'AI-Automation-Lab-' + sha.slice(0,7) + '-complete.zip';
+  const expected = [name,name+'.sha256'].sort();
+  if (JSON.stringify(fs.readdirSync(folder).sort()) !== JSON.stringify(expected))
+    throw new Error('Unexpected complete bundle file list');
+  for (const filename of expected) {
+    const stat = fs.lstatSync(path.join(folder,filename));
+    if (!stat.isFile() || stat.isSymbolicLink() || stat.size > 10*1024*1024)
+      throw new Error('Invalid complete bundle file');
+  }
+  const data = fs.readFileSync(path.join(folder,name));
+  const digest = crypto.createHash('sha256').update(data).digest('hex');
+  const sums = fs.readFileSync(path.join(folder,name+'.sha256'),'utf8');
+  if (!data.length || sums !== digest + '  ' + name + '\n') throw new Error('Complete bundle hash mismatch');
+  return {'complete-delivery.zip':data,
+          'complete-delivery.zip.sha256':Buffer.from(digest+'  complete-delivery.zip\n')};
+}
+
 function md(value) {
   return String(value).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
     .replace(/[\\\`*_\[\]|]/g, c => '&#' + c.charCodeAt(0) + ';').replace(/[\r\n]+/g,' ');
@@ -90,13 +109,15 @@ function renderOverview(report, history, diagnosis, snapshot) {
       lines.push('  [原任务证据](' + repo + '/actions/runs/' + item.id + ')');
   }
   lines.push('','## 查看与下载','',
+    '- [下载完整交付包：报告、诊断、日志、校验清单和源码](complete-delivery.zip)',
+    '- [完整包 SHA-256](complete-delivery.zip.sha256)',
     '- [完整中文报告](report.md)',
     '- [待处理清单](diagnosis.md)',
     '- [历史任务与产物入口](history.md)',
     '- [下载对应源码 ZIP](' + source + ')',
     '- [文件校验清单](SHA256SUMS.txt)','',
     '本分支保存快照，不受 Actions 产物保留期限制；删除仓库、分支或文件后仍会丢失。主分支未因报告发布而修改。','',
-    '原交付校验文件不覆盖本分支额外生成的 README.md 与 snapshot.json。','');
+    '完整 ZIP 有独立 SHA-256；包内清单校验原始交付文件。本分支额外的总览与来源说明不在包内清单范围。','');
   return lines.join('\n');
 }
 
@@ -107,6 +128,7 @@ async function publish({github, context, core}) {
   if (owner !== 'tu134186' || repo !== 'AI-Automation-Lab'
       || context.ref !== 'refs/heads/' + sourceBranch) throw new Error('Unauthorized snapshot target');
   const files = validateSnapshot('downloaded-report', context.sha, context.runId);
+  Object.assign(files, validateBundle('downloaded-bundle', context.sha));
   const source = await github.rest.git.getRef({owner, repo, ref:'heads/' + sourceBranch});
   if (source.data.object.sha !== context.sha) throw new Error('Source branch changed; refuse stale publication');
   let parent = null;
@@ -141,5 +163,5 @@ async function publish({github, context, core}) {
   await core.summary.addHeading('固定报告入口已更新').addLink('查看最新中文报告',url)
     .addRaw('\n源码 Commit：' + context.sha + '\n').write();
 }
-module.exports = {validateSnapshot,publish,renderOverview};
+module.exports = {validateSnapshot,validateBundle,publish,renderOverview};
 

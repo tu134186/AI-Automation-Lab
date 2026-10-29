@@ -61,6 +61,16 @@ jobs:
             echo '## 交付校验未通过' >> "$GITHUB_STEP_SUMMARY"
             echo '下载内容仅供排查，请查看校验步骤日志；不能视为已验证交付包。' >> "$GITHUB_STEP_SUMMARY"
           fi
+      - name: Build and independently verify complete offline ZIP
+        run: python3 scripts/build_bundle.py reports delivery-bundle --commit "$GITHUB_SHA" --run-id "$GITHUB_RUN_ID"
+      - name: Upload complete delivery ZIP
+        id: bundle_upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: complete-delivery-${{ github.sha }}
+          path: delivery-bundle/
+          retention-days: 30
+          if-no-files-found: error
       - name: Upload reports, test log and source
         if: always()
         id: upload
@@ -94,6 +104,10 @@ jobs:
         with:
           name: report-center-${{ github.sha }}
           path: downloaded-report
+      - uses: actions/download-artifact@v4
+        with:
+          name: complete-delivery-${{ github.sha }}
+          path: downloaded-bundle
       - name: Verify hashes and save snapshot to isolated report branch
         uses: actions/github-script@v7
         with:

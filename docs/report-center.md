@@ -65,3 +65,11 @@ report_policy.json 明确列出工作流路径、分支与暂停原因。当前�
 待处理与已暂停分别展示；原始证据任务、失败结论和暂停原因在诊断 JSON／Markdown／HTML／手机总览中保留。历史失败数量及成功率仍包括原失败。
 移除暂停条目后，该未解决失败重新进入待处理清单；其他分支、其他工作流不受规则影响。
 history.json schema=5，包含已使用的 policy；交付核验还会比较源码 ZIP 内的 report_policy.json，防止分类策略与源码错配。
+
+## 单个完整离线包
+scripts/build_bundle.py 在原始交付核验通过后，把 12 个原始交付文件打入同一个 complete ZIP，内含报告、历史、诊断、日志、清单和源码 ZIP。
+打包后重新打开 ZIP，检查 12 个固定文件、重复项、路径、文件类型、大小及外部 SHA-256，在临时目录复核内部交付一致性。
+仅通过后上传独立 complete-delivery 产物；原 reports 目录与原 12 文件清单保持不变。
+报告发布 Job 下载两个产物，核对完整 ZIP 的 SHA-256 后，将其保存为 reports-latest/complete-delivery.zip，并写对应 .sha256；手机总览提供固定下载。
+完整包内部文件是原始 12 项，额外的总览 README、snapshot.json 和 ZIP 自身不参与递归校验。ZIP 的校验值是外置独立文件。
+固定文件随成功快照更新，旧快照仍可从报告分支提交历史追溯；最新源 Commit 见包内 manifest.json 和手机总览。

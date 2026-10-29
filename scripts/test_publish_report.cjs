@@ -3,7 +3,7 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const crypto = require('node:crypto');
-const {validateSnapshot,publish,renderOverview} = require('./publish_report.cjs');
+const {validateSnapshot,validateBundle,publish,renderOverview} = require('./publish_report.cjs');
 const sha = 'a'.repeat(40);
 const base = fs.mkdtempSync(path.join(os.tmpdir(),'report-publish-'));
 const original = process.cwd();
@@ -26,6 +26,12 @@ function fixture() {
   }
   fs.writeFileSync(path.join(folder,'manifest.json'),JSON.stringify({schema:1,commit:sha,run_id:'123',test_state:'全部通过',files}));
   fs.writeFileSync(path.join(folder,'SHA256SUMS.txt'),Object.entries(files).map(([name,x])=>x.sha256+'  '+name+'\n').join(''));
+  const bundle=path.join(base,'downloaded-bundle');
+  fs.rmSync(bundle,{recursive:true,force:true});fs.mkdirSync(bundle);
+  const bundleName='AI-Automation-Lab-'+sha.slice(0,7)+'-complete.zip';
+  const bundleData=Buffer.from('fixture-complete-zip');
+  fs.writeFileSync(path.join(bundle,bundleName),bundleData);
+  fs.writeFileSync(path.join(bundle,bundleName+'.sha256'),crypto.createHash('sha256').update(bundleData).digest('hex')+'  '+bundleName+'\n');
   return folder;
 }
 async function main() {
@@ -33,6 +39,10 @@ async function main() {
     process.chdir(base);
     let folder=fixture();
     assert.equal(Object.keys(validateSnapshot(folder,sha,123)).length,12);
+    assert.equal(Object.keys(validateBundle(path.join(base,'downloaded-bundle'),sha)).length,2);
+    fs.appendFileSync(path.join(base,'downloaded-bundle','AI-Automation-Lab-'+sha.slice(0,7)+'-complete.zip'),'bad');
+    assert.throws(()=>validateBundle(path.join(base,'downloaded-bundle'),sha),/hash mismatch/);
+    folder=fixture();
     const snapshot={source_commit:sha,run_id:123,updated_at:'2026-10-29T15:00:00Z'};
     const overview=renderOverview({context:{commit:sha},all_passed:true,total:63},
       {scanned_count:16},{items:[]},snapshot);
@@ -85,7 +95,7 @@ async function main() {
     const core={info(){},summary};
     await publish({github,context,core});
     assert.equal(writes.find(x=>x[0]==='ref')[1].ref,'refs/heads/reports-latest');
-    assert.equal(writes.find(x=>x[0]==='tree')[1].tree.length,14);
+    assert.equal(writes.find(x=>x[0]==='tree')[1].tree.length,16);
     writes=[];existing=true;
     await publish({github,context,core});
     assert.equal(writes.find(x=>x[0]==='update')[1].ref,'heads/reports-latest');
