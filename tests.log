@@ -60,6 +60,11 @@ test_failure_steps_and_only_live_artifacts (test_run_history.HistoryTests.test_f
 test_invalid_run_id_rejected (test_run_history.HistoryTests.test_invalid_run_id_rejected) ... ok
 test_partial_failure_stays_visible (test_run_history.HistoryTests.test_partial_failure_stays_visible) ... ok
 test_statuses_never_treat_cancelled_or_unknown_as_success (test_run_history.HistoryTests.test_statuses_never_treat_cancelled_or_unknown_as_success) ... ok
+test_failed_rollback_retains_backup_for_recovery (test_transactional_export.TransactionalExportTests.test_failed_rollback_retains_backup_for_recovery) ... ok
+test_invalid_second_destination_preserves_first_report (test_transactional_export.TransactionalExportTests.test_invalid_second_destination_preserves_first_report) ... ok
+test_second_failure_removes_new_first_output (test_transactional_export.TransactionalExportTests.test_second_failure_removes_new_first_output) ... ok
+test_second_replace_failure_rolls_back_existing_output (test_transactional_export.TransactionalExportTests.test_second_replace_failure_rolls_back_existing_output) ... ok
+test_success_preserves_output_symlink (test_transactional_export.TransactionalExportTests.test_success_preserves_output_symlink) ... ok
 test_action_required_not_hidden (test_triage.TriageTests.test_action_required_not_hidden) ... ok
 test_branches_and_workflows_isolated (test_triage.TriageTests.test_branches_and_workflows_isolated) ... ok
 test_cancelled_run_does_not_erase_failure (test_triage.TriageTests.test_cancelled_run_does_not_erase_failure) ... ok
@@ -77,6 +82,6 @@ test_scan_bounded_and_current_excluded (test_wider_history.WiderHistoryTests.tes
 test_unresolved_failure_gets_priority_over_resolved_history (test_wider_history.WiderHistoryTests.test_unresolved_failure_gets_priority_over_resolved_history) ... ok
 
 ----------------------------------------------------------------------
-Ran 77 tests in 1.313s
+Ran 82 tests in 1.195s
 
 OK

@@ -2,14 +2,14 @@
 
 **全部通过**
 
-通过：78 · 失败：0 · 进行中：0 · 跳过：0
+通过：83 · 失败：0 · 进行中：0 · 跳过：0
 
 - 仓库：tu134186/AI-Automation-Lab
 - 分支：feature/report-center-20261029
-- Commit：4d1beaa09d927da20480485ca1fe24f9ad291117
+- Commit：7d23562bc7141ea8fda4c65663ee4acb3d2522ea
 
-<a href="https://github.com/tu134186/AI-Automation-Lab/actions/runs/40908241267">任务记录与报告下载</a>
-<a href="https://github.com/tu134186/AI-Automation-Lab/commit/4d1beaa09d927da20480485ca1fe24f9ad291117">本次修改</a>
+<a href="https://github.com/tu134186/AI-Automation-Lab/actions/runs/40909142221">任务记录与报告下载</a>
+<a href="https://github.com/tu134186/AI-Automation-Lab/commit/7d23562bc7141ea8fda4c65663ee4acb3d2522ea">本次修改</a>
 
 | 测试 | 状态 | 原因／详情 |
 | --- | --- | --- |
@@ -76,6 +76,11 @@
 | test&#95;run&#95;history.HistoryTests.test&#95;invalid&#95;run&#95;id&#95;rejected | 通过 |  |
 | test&#95;run&#95;history.HistoryTests.test&#95;partial&#95;failure&#95;stays&#95;visible | 通过 |  |
 | test&#95;run&#95;history.HistoryTests.test&#95;statuses&#95;never&#95;treat&#95;cancelled&#95;or&#95;unknown&#95;as&#95;success | 通过 |  |
+| test&#95;transactional&#95;export.TransactionalExportTests.test&#95;failed&#95;rollback&#95;retains&#95;backup&#95;for&#95;recovery | 通过 |  |
+| test&#95;transactional&#95;export.TransactionalExportTests.test&#95;invalid&#95;second&#95;destination&#95;preserves&#95;first&#95;report | 通过 |  |
+| test&#95;transactional&#95;export.TransactionalExportTests.test&#95;second&#95;failure&#95;removes&#95;new&#95;first&#95;output | 通过 |  |
+| test&#95;transactional&#95;export.TransactionalExportTests.test&#95;second&#95;replace&#95;failure&#95;rolls&#95;back&#95;existing&#95;output | 通过 |  |
+| test&#95;transactional&#95;export.TransactionalExportTests.test&#95;success&#95;preserves&#95;output&#95;symlink | 通过 |  |
 | test&#95;triage.TriageTests.test&#95;action&#95;required&#95;not&#95;hidden | 通过 |  |
 | test&#95;triage.TriageTests.test&#95;branches&#95;and&#95;workflows&#95;isolated | 通过 |  |
 | test&#95;triage.TriageTests.test&#95;cancelled&#95;run&#95;does&#95;not&#95;erase&#95;failure | 通过 |  |
@@ -94,6 +99,6 @@
 
 ## 修改记录
 
-fix: retain repeated test failures and avoid duplicate PR synchronization runs<br><br> .github/workflows/buildmate.yml  &#124;  95 +++++++++++++++++<br> .github/workflows/lab-check.yml  &#124; 117 +++++++++++++++++++++<br> AGENTS.md                        &#124;  21 ++++<br> README.md                        &#124;  77 ++++++++++++++<br> build-config.json                &#124;   1 +<br> docs/development-test.md         &#124;  12 +++<br> docs/report-center.md            &#124;  80 +++++++++++++++<br> docs/verification-2026-10-29.md  &#124;  26 +++++<br> examples/report.html             &#124;  23 +++++<br> examples/report.md               &#124;  12 +++<br> examples/tasks.json              &#124;   4 +<br> lab&#95;report.py                    &#124; 112 ++++++++++++++++++++<br> report&#95;center.py                 &#124; 142 ++++++++++++++++++++++++++<br> report&#95;policy.json               &#124;  11 ++<br> scripts/build&#95;bundle.py          &#124;  88 ++++++++++++++++<br> scripts/publish&#95;report.cjs       &#124; 167 ++++++++++++++++++++++++++++++<br> scripts/report&#95;policy.py         &#124;  30 ++++++<br> scripts/run&#95;history.py           &#124; 214 +++++++++++++++++++++++++++++++++++++++<br> scripts/run&#95;report.py            &#124;  78 ++++++++++++++<br> scripts/self&#95;check.py            &#124;  14 +++<br> scripts/test&#95;publish&#95;report.cjs  &#124; 116 +++++++++++++++++++++<br> scripts/triage.py                &#124; 106 +++++++++++++++++++<br> scripts/validate&#95;delivery.py     &#124; 138 +++++++++++++++++++++++++<br> tests/test&#95;bundle.py             &#124;  42 ++++++++<br> tests/test&#95;delivery.py           &#124;  93 +++++++++++++++++<br> tests/test&#95;history&#95;comparison.py &#124;  38 +++++++<br> tests/test&#95;lab&#95;report.py         &#124; 134 ++++++++++++++++++++++++<br> tests/test&#95;publish&#95;snapshot.py   &#124;  12 +++<br> tests/test&#95;report&#95;center.py      &#124;  50 +++++++++<br> tests/test&#95;report&#95;collector.py   &#124;  55 ++++++++++<br> tests/test&#95;report&#95;policy.py      &#124;  53 ++++++++++<br> tests/test&#95;run&#95;history.py        &#124;  64 ++++++++++++<br> tests/test&#95;triage.py             &#124;  54 ++++++++++<br> tests/test&#95;wider&#95;history.py      &#124;  48 +++++++++<br> 34 files changed, 2327 insertions(+)
+fix: protect existing reports when multi-format export fails<br><br> .github/workflows/buildmate.yml    &#124;  95 ++++++++++++++++<br> .github/workflows/lab-check.yml    &#124; 117 ++++++++++++++++++++<br> AGENTS.md                          &#124;  21 ++++<br> README.md                          &#124;  77 +++++++++++++<br> build-config.json                  &#124;   1 +<br> docs/development-test.md           &#124;  12 +++<br> docs/report-center.md              &#124;  87 +++++++++++++++<br> docs/verification-2026-10-29.md    &#124;  26 +++++<br> examples/report.html               &#124;  23 ++++<br> examples/report.md                 &#124;  12 +++<br> examples/tasks.json                &#124;   4 +<br> lab&#95;report.py                      &#124; 163 ++++++++++++++++++++++++++++<br> report&#95;center.py                   &#124; 142 ++++++++++++++++++++++++<br> report&#95;policy.json                 &#124;  11 ++<br> scripts/build&#95;bundle.py            &#124;  88 +++++++++++++++<br> scripts/publish&#95;report.cjs         &#124; 167 +++++++++++++++++++++++++++++<br> scripts/report&#95;policy.py           &#124;  30 ++++++<br> scripts/run&#95;history.py             &#124; 214 +++++++++++++++++++++++++++++++++++++<br> scripts/run&#95;report.py              &#124;  78 ++++++++++++++<br> scripts/self&#95;check.py              &#124;  14 +++<br> scripts/test&#95;publish&#95;report.cjs    &#124; 116 ++++++++++++++++++++<br> scripts/triage.py                  &#124; 106 ++++++++++++++++++<br> scripts/validate&#95;delivery.py       &#124; 138 ++++++++++++++++++++++++<br> tests/test&#95;bundle.py               &#124;  42 ++++++++<br> tests/test&#95;delivery.py             &#124;  93 ++++++++++++++++<br> tests/test&#95;history&#95;comparison.py   &#124;  38 +++++++<br> tests/test&#95;lab&#95;report.py           &#124; 134 +++++++++++++++++++++++<br> tests/test&#95;publish&#95;snapshot.py     &#124;  12 +++<br> tests/test&#95;report&#95;center.py        &#124;  50 +++++++++<br> tests/test&#95;report&#95;collector.py     &#124;  55 ++++++++++<br> tests/test&#95;report&#95;policy.py        &#124;  53 +++++++++<br> tests/test&#95;run&#95;history.py          &#124;  64 +++++++++++<br> tests/test&#95;transactional&#95;export.py &#124;  69 ++++++++++++<br> tests/test&#95;triage.py               &#124;  54 ++++++++++<br> tests/test&#95;wider&#95;history.py        &#124;  48 +++++++++<br> 35 files changed, 2454 insertions(+)
 
 报告来自本次实际测试。跳过不计为通过；下载文件位于任务页底部 Artifacts。
