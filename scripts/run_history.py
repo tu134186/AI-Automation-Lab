@@ -56,27 +56,32 @@ def comparisons(items):
             "success_rate": round(100 * passed / len(eligible), 1) if eligible else None,
             "excluded": len(items) - len(eligible)}
 
+def run_item(run):
+    ident = run.get("id")
+    if type(ident) is not int or ident <= 0:
+        raise ValueError("无效任务 ID")
+    return {"id": ident, "name": str(run.get("name") or "未命名任务"),
+            "workflow_key": str(run.get("workflow_id") or run.get("path") or ""),
+            "state": state(run), "status": run.get("status"),
+            "conclusion": run.get("conclusion"), "branch": str(run.get("head_branch") or ""),
+            "commit": str(run.get("head_sha") or ""),
+            "created_at": str(run.get("created_at") or ""),
+            "url": f"https://github.com/{REPOSITORY}/actions/runs/{ident}",
+            "failed_steps": [], "log_links": [], "artifacts": [], "notes": []}
+
 def collect(get, current_run=""):
-    payload = get("actions/runs?per_page=11")
+    payload = get("actions/runs?per_page=100")
     runs = [x for x in payload.get("workflow_runs", [])
-            if str(x.get("id")) != str(current_run)][:10]
+            if str(x.get("id")) != str(current_run)][:100]
+    probes = [run_item(run) for run in runs]
+    active = [x["id"] for x in build_triage(probes)["items"] if x["kind"] == "失败待处理"]
+    historical = [x["id"] for x in probes if x["conclusion"] in BAD and x["id"] not in active]
+    diagnostic_ids = set((active + historical)[:3])
     items = []
-    diagnostics = 0
     downloads = 0
-    for run in runs:
-        ident = run.get("id")
-        if type(ident) is not int or ident <= 0:
-            raise ValueError("无效任务 ID")
-        base = f"https://github.com/{REPOSITORY}/actions/runs/{ident}"
-        item = {"id": ident, "name": str(run.get("name") or "未命名任务"),
-                "workflow_key": str(run.get("workflow_id") or run.get("path") or ""),
-                "state": state(run), "status": run.get("status"),
-                "conclusion": run.get("conclusion"), "branch": str(run.get("head_branch") or ""),
-                "commit": str(run.get("head_sha") or ""),
-                "created_at": str(run.get("created_at") or ""),
-                "url": base, "failed_steps": [], "log_links": [], "artifacts": [], "notes": []}
-        if run.get("conclusion") in ("failure", "timed_out", "startup_failure") and diagnostics < 3:
-            diagnostics += 1
+    for run, item in zip(runs, probes):
+        ident, base = item["id"], item["url"]
+        if ident in diagnostic_ids:
             try:
                 jobs = get(f"actions/runs/{ident}/jobs?per_page=100").get("jobs", [])
                 for job in jobs:
@@ -95,7 +100,7 @@ def collect(get, current_run=""):
             except (HTTPError, URLError, ValueError):
                 item["notes"].append("失败详情读取失败，请查看原任务日志。")
         elif run.get("conclusion") in ("failure", "timed_out", "startup_failure"):
-            item["notes"].append("本次只展开最近 3 个失败任务，请查看原任务日志。")
+            item["notes"].append("本次最多展开 3 个失败任务，优先未解决失败；请查看原任务日志。")
         if run.get("status") == "completed" and downloads < 5:
             downloads += 1
             try:
@@ -114,10 +119,10 @@ def collect(get, current_run=""):
             item["notes"].append("本次只查询最近 5 个已完成任务的产物。")
         items.append(item)
     metrics = comparisons(items)
-    return {"schema": 3, "repository": REPOSITORY, "metrics": metrics, "triage": build_triage(items),
+    return {"schema": 4, "repository": REPOSITORY, "metrics": metrics, "triage": build_triage(items),
             "collected_at": datetime.now(timezone.utc).isoformat(),
-            "scope": "本仓库最近 10 次运行；排除本次运行；不是实时监控。",
-            "runs": items}
+            "scope": f"已扫描本仓库最近 {len(items)} 次运行（最多 100 次）；列表仅展示最近 10 次；统计与待处理覆盖扫描范围；排除本次运行，不是实时监控。",
+            "scanned_count": len(items), "scanned_runs": items, "runs": items[:10]}
 
 def markdown(data):
     lines = ["## 最近云端任务", "", data["scope"], "",
@@ -182,6 +187,8 @@ def main():
             with urlopen(request, timeout=15) as response:
                 return json.load(response)
         data = collect(get, os.environ.get("GITHUB_RUN_ID", ""))
+        print(f"History scanned={data['scanned_count']} visible={len(data['runs'])} pending={len(data['triage']['items'])}")
+        print("Pending evidence run IDs:", ",".join(str(x["id"]) for x in data["triage"]["items"]) or "none")
         (root / "diagnosis.json").write_text(json.dumps(data["triage"], ensure_ascii=False, indent=2), encoding="utf-8")
         (root / "diagnosis.md").write_text(triage_md(data["triage"]), encoding="utf-8")
         (root / "history.json").write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")

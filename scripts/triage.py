@@ -41,7 +41,7 @@ def build_triage(items):
                         "failed_steps": evidence.get("failed_steps", []),
                         "log_links": evidence.get("log_links", []),
                         "notes": evidence.get("notes", [])})
-    return {"scope": "仅覆盖当前最近 10 次历史快照；不代表整个仓库全部故障。",
+    return {"scope": f"覆盖本次已扫描的 {len(items)} 次历史运行（最多 100 次）；不代表整个仓库全部故障。",
             "evidence_note": "排查方向依据失败步骤名称，不是已确认根因；未自动重试或修改历史任务。",
             "items": pending}
 
