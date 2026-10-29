@@ -12,6 +12,7 @@ from urllib.request import Request, urlopen
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from report_center import escape_md
+from scripts.triage import build_triage, render_md as triage_md, render_html as triage_html
 
 REPOSITORY = "tu134186/AI-Automation-Lab"
 LABELS = {"success": "通过", "failure": "失败", "cancelled": "已取消",
@@ -73,7 +74,7 @@ def collect(get, current_run=""):
                 "conclusion": run.get("conclusion"), "branch": str(run.get("head_branch") or ""),
                 "commit": str(run.get("head_sha") or ""),
                 "created_at": str(run.get("created_at") or ""),
-                "url": base, "failed_steps": [], "artifacts": [], "notes": []}
+                "url": base, "failed_steps": [], "log_links": [], "artifacts": [], "notes": []}
         if run.get("conclusion") in ("failure", "timed_out", "startup_failure") and diagnostics < 3:
             diagnostics += 1
             try:
@@ -81,6 +82,10 @@ def collect(get, current_run=""):
                 for job in jobs:
                     if job.get("conclusion") not in ("failure", "timed_out", "startup_failure"):
                         continue
+                    job_id = job.get("id")
+                    if type(job_id) is int and job_id > 0:
+                        item["log_links"].append({"name": str(job.get("name") or "失败 Job"),
+                                                  "url": base + f"/job/{job_id}"})
                     steps = [s.get("name", "未知步骤") for s in job.get("steps", [])
                              if s.get("conclusion") in ("failure", "timed_out")]
                     item["failed_steps"].append(str(job.get("name") or "未知 Job")
@@ -109,7 +114,7 @@ def collect(get, current_run=""):
             item["notes"].append("本次只查询最近 5 个已完成任务的产物。")
         items.append(item)
     metrics = comparisons(items)
-    return {"schema": 2, "repository": REPOSITORY, "metrics": metrics,
+    return {"schema": 3, "repository": REPOSITORY, "metrics": metrics, "triage": build_triage(items),
             "collected_at": datetime.now(timezone.utc).isoformat(),
             "scope": "本仓库最近 10 次运行；排除本次运行；不是实时监控。",
             "runs": items}
@@ -140,7 +145,7 @@ def markdown(data):
     if not data["runs"]:
         lines.append("没有返回历史任务，不能据此判断所有任务通过。")
     lines.append("")
-    return "\n".join(lines)
+    return triage_md(data["triage"]) + "\n".join(lines)
 
 def html_section(data):
     esc = lambda value: html.escape(str(value), quote=True)
@@ -158,7 +163,7 @@ def html_section(data):
     m = data["metrics"]
     rate = "暂无有效结果" if m["success_rate"] is None else str(m["success_rate"]) + "%"
     overview = f'<p>有效结果 {m["measurable"]} · 通过 {m["passed"]} · 失败 {m["failed"]} · 成功率 {rate}</p><p class="meta">取消、跳过、等待和未知结论不计入成功率；只比较同工作流、同分支在当前快照内的有效结果。</p>'
-    return ('<section><h2>最近云端任务</h2>' + overview + '<p class="meta">'
+    return (triage_html(data["triage"]) + '<section><h2>最近云端任务</h2>' + overview + '<p class="meta">'
             + esc(data["scope"]) + "<br>采集时间（UTC）：" + esc(data["collected_at"]) + "</p>"
             + ("".join(rows) or "<p>没有返回历史任务，不能判断为全部通过。</p>") + "</section>")
 
@@ -177,6 +182,8 @@ def main():
             with urlopen(request, timeout=15) as response:
                 return json.load(response)
         data = collect(get, os.environ.get("GITHUB_RUN_ID", ""))
+        (root / "diagnosis.json").write_text(json.dumps(data["triage"], ensure_ascii=False, indent=2), encoding="utf-8")
+        (root / "diagnosis.md").write_text(triage_md(data["triage"]), encoding="utf-8")
         (root / "history.json").write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
         (root / "history.md").write_text(markdown(data), encoding="utf-8")
         page = root / "report.html"
