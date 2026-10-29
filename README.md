@@ -2,7 +2,7 @@
 
 ## 手机查看入口
 
-[固定查看最新中文报告](https://github.com/tu134186/AI-Automation-Lab/blob/reports-latest/report.md) · [最新诊断清单](https://github.com/tu134186/AI-Automation-Lab/blob/reports-latest/diagnosis.md)
+[手机总览入口](https://github.com/tu134186/AI-Automation-Lab/blob/reports-latest/README.md) · [最新诊断清单](https://github.com/tu134186/AI-Automation-Lab/blob/reports-latest/diagnosis.md)
 
 上述固定入口由独立 reports-latest 分支保存已核验快照，直到该分支或文件被删除，不依赖 Actions 产物保留天数。最新任务失败时保留上次成功快照，必须核对报告中的 Commit 和采集时间。
 
@@ -14,6 +14,8 @@
 HTML 为离线文件，需要下载后打开；GitHub 任务摘要可以直接在手机浏览器查看。
 
 ## 当前能力
+
+- 手机总览展示北京时间、本次检查、历史待处理、当前工作流状态链接及常用下载入口；完整报告仍保留。
 
 - 上传前核对报告、诊断和源码 Commit，提供 manifest.json、SHA256SUMS.txt 与交付核验结果。
 

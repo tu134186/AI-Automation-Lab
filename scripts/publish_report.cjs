@@ -36,6 +36,59 @@ function validateSnapshot(folder, sha, runId) {
   return buffers;
 }
 
+function md(value) {
+  return String(value).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/[\\\`*_\[\]|]/g, c => '&#' + c.charCodeAt(0) + ';').replace(/[\r\n]+/g,' ');
+}
+
+function renderOverview(report, history, diagnosis, snapshot) {
+  if (report.context?.commit !== snapshot.source_commit || report.all_passed !== true
+      || !Number.isSafeInteger(report.total) || report.total < 1
+      || !Number.isSafeInteger(history.scanned_count) || history.scanned_count < 0
+      || !Array.isArray(diagnosis.items) || !/^[0-9a-f]{40}$/.test(snapshot.source_commit)
+      || !Number.isSafeInteger(snapshot.run_id) || snapshot.run_id < 1)
+    throw new Error('Invalid overview evidence');
+  const date = new Date(snapshot.updated_at);
+  if (!Number.isFinite(date.getTime())) throw new Error('Invalid snapshot date');
+  const local = new Intl.DateTimeFormat('zh-CN',{timeZone:'Asia/Shanghai',year:'numeric',month:'2-digit',
+    day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}).format(date);
+  const repo = 'https://github.com/tu134186/AI-Automation-Lab';
+  const current = repo + '/actions?query=branch%3Afeature%2Freport-center-20261029';
+  const badge = repo + '/actions/workflows/lab-check.yml/badge.svg?branch=feature%2Freport-center-20261029';
+  const source = 'AI-Automation-Lab-' + snapshot.source_commit.slice(0,7) + '-source.zip';
+  const lines = ['# 报告中心 · 手机总览','',
+    '## 已保存的核验快照','',
+    '| 项目 | 结果 |','| --- | --- |',
+    '| 本次自动检查 | 全部通过，共 ' + report.total + ' 项 |',
+    '| 历史待处理 | ' + diagnosis.items.length + ' 项，独立于本次检查结果 |',
+    '| 历史扫描 | ' + history.scanned_count + ' 次 |',
+    '| 快照更新时间 | ' + local + '（北京时间） |','',
+    '源码 Commit：' + snapshot.source_commit,'',
+    '[本快照对应任务](' + repo + '/actions/runs/' + snapshot.run_id + ') · [核验说明](delivery.md)','',
+    '## 当前任务状态','',
+    '[![GitHub 当前工作流状态](' + badge + ')](' + current + ')','',
+    '[查看当前任务列表](' + current + ')。上方快照只在核验成功后更新；新任务运行中或失败时，这里可能仍是上次成功结果。徽章由 GitHub 加载，可能有缓存，以任务页为准。','',
+    '## 需要关注',''];
+  if (!diagnosis.items.length) lines.push('本次扫描未发现待处理；不代表未扫描的旧任务全部正常。');
+  for (const item of diagnosis.items.slice(0,5)) {
+    const label = md((String(item.name || '未命名任务')).slice(0,100));
+    lines.push('- **' + md(item.kind || '待核对') + '：' + label + '**（' + md(item.branch || '') + '）');
+    lines.push('  ' + md(item.direction || '请查看诊断清单中的证据。'));
+    if (Number.isSafeInteger(item.id) && item.id > 0)
+      lines.push('  [查看证据任务](' + repo + '/actions/runs/' + item.id + ')');
+  }
+  if (diagnosis.items.length > 5) lines.push('其余事项请查看完整待处理清单。');
+  lines.push('','## 查看与下载','',
+    '- [完整中文报告](report.md)',
+    '- [待处理清单](diagnosis.md)',
+    '- [历史任务与产物入口](history.md)',
+    '- [下载对应源码 ZIP](' + source + ')',
+    '- [文件校验清单](SHA256SUMS.txt)','',
+    '本分支保存快照，不受 Actions 产物保留期限制；删除仓库、分支或文件后仍会丢失。主分支未因报告发布而修改。','',
+    '原交付校验文件不覆盖本分支额外生成的 README.md 与 snapshot.json。','');
+  return lines.join('\n');
+}
+
 async function publish({github, context, core}) {
   const {owner, repo} = context.repo;
   const sourceBranch = 'feature/report-center-20261029';
@@ -56,14 +109,10 @@ async function publish({github, context, core}) {
     run_url:'https://github.com/' + owner + '/' + repo + '/actions/runs/' + context.runId,
     updated_at:new Date().toISOString()};
   files['snapshot.json'] = Buffer.from(JSON.stringify(snapshot,null,2) + '\n');
-  files['README.md'] = Buffer.from('# 最新已核验报告\n\n'
-    + '[直接查看中文报告](report.md) · [待处理清单](diagnosis.md) · [历史任务](history.md)\n\n'
-    + '源码 Commit：' + context.sha + '\n\n'
-    + '[本次云端任务](' + snapshot.run_url + ')\n\n'
-    + '[下载对应源码 ZIP](AI-Automation-Lab-' + context.sha.slice(0,7) + '-source.zip)\n\n'
-    + '本分支由云端保存最新已核验快照；不依赖 Actions 产物保留天数，直到分支或文件被删除。\n'
-    + '数据是采集时快照，不是实时状态。最新报告任务若失败，本分支保留上次成功快照，请以 Commit 和任务链接核对时间。\n'
-    + '交付校验文件覆盖下载包中的原始 10 个文件，不包含本分支额外生成的 README.md 和 snapshot.json。\n');
+  files['README.md'] = Buffer.from(renderOverview(
+    JSON.parse(files['report.json'].toString('utf8')),
+    JSON.parse(files['history.json'].toString('utf8')),
+    JSON.parse(files['diagnosis.json'].toString('utf8')), snapshot));
   const entries = await Promise.all(Object.entries(files).map(async ([filename,data]) => {
     const blob = await github.rest.git.createBlob({owner,repo,encoding:'base64',content:data.toString('base64')});
     return {path:filename,mode:'100644',type:'blob',sha:blob.data.sha};
@@ -76,10 +125,10 @@ async function publish({github, context, core}) {
   } else {
     await github.rest.git.createRef({owner,repo,ref:'refs/heads/' + target,sha:commit.data.sha});
   }
-  const url = 'https://github.com/' + owner + '/' + repo + '/blob/' + target + '/report.md';
+  const url = 'https://github.com/' + owner + '/' + repo + '/blob/' + target + '/README.md';
   core.info('Published verified snapshot: ' + commit.data.sha);
   await core.summary.addHeading('固定报告入口已更新').addLink('查看最新中文报告',url)
     .addRaw('\n源码 Commit：' + context.sha + '\n').write();
 }
-module.exports = {validateSnapshot,publish};
+module.exports = {validateSnapshot,publish,renderOverview};
 

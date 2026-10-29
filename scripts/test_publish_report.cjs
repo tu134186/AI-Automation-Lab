@@ -3,7 +3,7 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const crypto = require('node:crypto');
-const {validateSnapshot,publish} = require('./publish_report.cjs');
+const {validateSnapshot,publish,renderOverview} = require('./publish_report.cjs');
 const sha = 'a'.repeat(40);
 const base = fs.mkdtempSync(path.join(os.tmpdir(),'report-publish-'));
 const original = process.cwd();
@@ -15,7 +15,12 @@ function fixture() {
     'diagnosis.json','diagnosis.md','delivery.md','AI-Automation-Lab-'+sha.slice(0,7)+'-source.zip'].sort();
   const files = {};
   for (const name of names) {
-    const data = Buffer.from('fixture '+name);
+    const special = {
+      'report.json': {context:{commit:sha},all_passed:true,total:63},
+      'history.json': {scanned_count:16},
+      'diagnosis.json': {items:[]}
+    };
+    const data = Buffer.from(special[name] ? JSON.stringify(special[name]) : 'fixture '+name);
     fs.writeFileSync(path.join(folder,name),data);
     files[name]={bytes:data.length,sha256:crypto.createHash('sha256').update(data).digest('hex')};
   }
@@ -28,6 +33,20 @@ async function main() {
     process.chdir(base);
     let folder=fixture();
     assert.equal(Object.keys(validateSnapshot(folder,sha,123)).length,12);
+    const snapshot={source_commit:sha,run_id:123,updated_at:'2026-10-29T15:00:00Z'};
+    const overview=renderOverview({context:{commit:sha},all_passed:true,total:63},
+      {scanned_count:16},{items:[]},snapshot);
+    assert.match(overview,/本次自动检查/);
+    assert.match(overview,/2026\/10\/29 23:00:00/);
+    assert.match(overview,/当前任务状态/);
+    assert.match(overview,/可能仍是上次成功结果/);
+    const dangerous=renderOverview({context:{commit:sha},all_passed:true,total:63},
+      {scanned_count:16},{items:[{id:7,name:'<script>bad</script>',branch:'x|y',kind:'失败待处理',direction:'<img>'}]},snapshot);
+    assert.ok(!dangerous.includes('<script>'));
+    assert.ok(!dangerous.includes('<img>'));
+    assert.match(dangerous,/历史待处理 \| 1 项/);
+    assert.throws(()=>renderOverview({context:{commit:sha},all_passed:false,total:63},
+      {scanned_count:16},{items:[]},snapshot));
     assert.throws(()=>validateSnapshot(folder,sha,456));
     assert.throws(()=>validateSnapshot(folder,'b'.repeat(40),123));
     fs.appendFileSync(path.join(folder,'report.md'),'corrupt');
