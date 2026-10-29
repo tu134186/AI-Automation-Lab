@@ -25,4 +25,4 @@ jobs:
       - name: Test task summary and error handling
         run: python3 -m unittest discover -s tests -v
       - name: Run sample
-        run: python3 lab_report.py examples/tasks.json
+        run: python3 lab_report.py examples/tasks.json --markdown report.md

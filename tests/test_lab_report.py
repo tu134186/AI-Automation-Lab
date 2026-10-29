@@ -35,5 +35,43 @@ class ReportTests(unittest.TestCase):
             result = subprocess.run([sys.executable,str(script),str(path.parent/"missing.json")],capture_output=True,text=True)
             self.assertEqual(result.returncode,2)
 
+
+class MarkdownTests(unittest.TestCase):
+    def test_markdown_summary_and_escape(self):
+        from lab_report import render_markdown
+        text = render_markdown([{'name':'中文|<b>\n*test*','status':'failure'}])
+        self.assertIn('Failure: 1', text)
+        self.assertIn('中文&#124;&lt;b&gt; &#42;test&#42;', text)
+        self.assertIn('| failure |', text)
+        self.assertTrue(text.endswith('\n'))
+
+    def test_empty_markdown(self):
+        from lab_report import render_markdown
+        text = render_markdown([])
+        self.assertIn('No tasks recorded.', text)
+        self.assertIn('All passed: no', text)
+
+    def test_export_cli_and_failures(self):
+        script = Path(__file__).resolve().parents[1] / 'lab_report.py'
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            source, output = root/'input.json', root/'report.md'
+            def run(target):
+                return subprocess.run([sys.executable,str(script),str(source),'--markdown',str(target)],capture_output=True,text=True)
+            for status, code in [('success',0),('failure',1),('running',1)]:
+                source.write_text(json.dumps([{'name':'中文','status':status}]),encoding='utf-8')
+                result = run(output)
+                self.assertEqual(result.returncode,code,result.stderr)
+                self.assertEqual(json.loads(result.stdout)['total'],1)
+                self.assertIn('| 中文 | '+status+' |',output.read_text(encoding='utf-8'))
+            before = source.read_bytes()
+            self.assertEqual(run(source).returncode,2)
+            self.assertEqual(source.read_bytes(),before)
+            self.assertEqual(run(root/'missing'/'report.md').returncode,2)
+            output.write_text('preserve',encoding='utf-8')
+            source.write_text('{')
+            self.assertEqual(run(output).returncode,2)
+            self.assertEqual(output.read_text(),'preserve')
+
 if __name__ == "__main__":
     unittest.main()
