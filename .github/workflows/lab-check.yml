@@ -1,28 +1,49 @@
 name: Automation Lab Check
 on:
   workflow_dispatch:
+  push:
+    branches: ['feature/report-center-20261029']
+    paths: ['report_center.py', 'lab_report.py', 'scripts/**', 'tests/**', '.github/workflows/lab-check.yml']
   pull_request:
-    paths:
-      - 'AGENTS.md'
-      - 'scripts/**'
-      - 'lab_report.py'
-      - 'tests/**'
-      - 'examples/**'
-      - '.github/workflows/lab-check.yml'
+    paths: ['AGENTS.md', 'scripts/**', 'report_center.py', 'lab_report.py', 'tests/**', 'examples/**', '.github/workflows/lab-check.yml']
 concurrency:
   group: lab-check-${{ github.ref }}
   cancel-in-progress: true
 permissions:
   contents: read
 jobs:
-  smoke:
+  report:
     runs-on: ubuntu-latest
     timeout-minutes: 3
     steps:
       - uses: actions/checkout@v4
-      - name: Run dependency-free smoke check
-        run: python3 scripts/self_check.py
-      - name: Test task summary and error handling
-        run: python3 -m unittest discover -s tests -v
-      - name: Run sample
-        run: python3 lab_report.py examples/tasks.json --markdown report.md --html report.html
+        with:
+          persist-credentials: false
+      - name: Run tests and export real reports
+        run: python3 scripts/run_report.py
+      - name: Publish Chinese report in task summary
+        if: always()
+        run: |
+          if [ -f reports/report.md ]; then
+            cat reports/report.md >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo '报告生成中断，请查看本任务失败日志，不能判断为通过。' >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - name: Package exact source
+        if: always()
+        run: git archive --format=zip -o "reports/AI-Automation-Lab-${GITHUB_SHA:0:7}-source.zip" HEAD
+      - name: Upload reports, test log and source
+        if: always()
+        id: upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: report-center-${{ github.sha }}
+          path: reports/
+          retention-days: 30
+          if-no-files-found: error
+      - name: Add direct download entry
+        if: always() && steps.upload.outcome == 'success'
+        env:
+          ARTIFACT_URL: ${{ steps.upload.outputs.artifact-url }}
+        run: |
+          printf '\n[下载 HTML、JSON、Markdown、测试日志和本次源码](%s)\n' "$ARTIFACT_URL" >> "$GITHUB_STEP_SUMMARY"
