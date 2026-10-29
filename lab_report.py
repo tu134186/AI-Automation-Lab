@@ -2,6 +2,10 @@
 import argparse
 import json
 import html
+import os
+import shutil
+import stat
+import tempfile
 from pathlib import Path
 
 STATUSES = ("success", "failure", "running")
@@ -82,6 +86,53 @@ th{{background:#edf2fa}}
 </html>
 """
 
+def write_reports(outputs):
+    """Stage every output before replacing files; roll back a failed commit."""
+    staged = []
+    committed = []
+    preserve_backups = False
+    try:
+        for path, text in outputs:
+            target = path.resolve()
+            if target.exists() and not target.is_file():
+                raise ValueError("output must be a regular file")
+            descriptor, temporary = tempfile.mkstemp(prefix=".lab-report-", dir=target.parent)
+            os.close(descriptor)
+            entry = {"target": target, "staged": Path(temporary), "backup": None}
+            staged.append(entry)
+            entry["staged"].write_text(text, encoding="utf-8")
+            if target.exists():
+                descriptor, backup = tempfile.mkstemp(prefix=".lab-report-backup-", dir=target.parent)
+                os.close(descriptor)
+                entry["backup"] = Path(backup)
+                shutil.copy2(target, backup)
+                os.chmod(entry["staged"], stat.S_IMODE(target.stat().st_mode))
+        for entry in staged:
+            os.replace(entry["staged"], entry["target"])
+            committed.append(entry)
+    except BaseException:
+        errors = []
+        for entry in reversed(committed):
+            try:
+                if entry["backup"] is None:
+                    entry["target"].unlink()
+                else:
+                    os.replace(entry["backup"], entry["target"])
+            except OSError as error:
+                errors.append(str(error))
+        if errors:
+            preserve_backups = True
+            raise OSError("output rollback incomplete: " + "; ".join(errors))
+        raise
+    finally:
+        for entry in staged:
+            for path in (entry["staged"], entry["backup"] if not preserve_backups else None):
+                if path is not None:
+                    try:
+                        path.unlink(missing_ok=True)
+                    except OSError:
+                        pass
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("input", type=Path)
@@ -101,8 +152,7 @@ def main():
                 if path.resolve() == other.resolve() or (
                         path.exists() and other.exists() and path.samefile(other)):
                     raise ValueError("input and output paths must differ")
-        for path, renderer in outputs:
-            path.write_text(renderer(records), encoding="utf-8")
+        write_reports([(path, renderer(records)) for path, renderer in outputs])
     except (OSError, UnicodeError, ValueError) as error:
         parser.exit(2, f"error: {error}\n")
     print(json.dumps(report, ensure_ascii=False, indent=2))
@@ -110,3 +160,4 @@ def main():
 
 if __name__ == "__main__":
     raise SystemExit(main())
+
