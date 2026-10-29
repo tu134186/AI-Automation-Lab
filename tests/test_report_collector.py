@@ -25,3 +25,31 @@ class CollectorTests(unittest.TestCase):
         self.assertFalse(result.wasSuccessful())
         self.assertEqual(len(result.records), 1)
         self.assertEqual(result.records[0]["status"], "failure")
+
+    def test_repeated_subtest_ids_keep_both_failures_exportable(self):
+        from report_center import build_report
+        class Sample(unittest.TestCase):
+            def test_repeated(self):
+                for _ in range(2):
+                    with self.subTest(value=1): self.fail("repeated failure")
+        result = unittest.TextTestRunner(stream=io.StringIO(), resultclass=Collector).run(
+            unittest.defaultTestLoader.loadTestsFromTestCase(Sample))
+        self.assertEqual(len(result.records), 2)
+        self.assertEqual(len({x["name"] for x in result.records}), 2)
+        self.assertEqual(len({x["test_id"] for x in result.records}), 1)
+        report = build_report(result.records, {})
+        self.assertEqual(report["counts"]["failure"], 2)
+        self.assertFalse(report["all_passed"])
+
+    def test_repeated_test_execution_preserves_original_id(self):
+        from report_center import build_report
+        class Sample(unittest.TestCase):
+            def test_ok(self): pass
+        suite = unittest.TestSuite([Sample("test_ok"), Sample("test_ok")])
+        result = unittest.TextTestRunner(stream=io.StringIO(), resultclass=Collector).run(suite)
+        report = build_report(result.records, {})
+        self.assertEqual(report["total"], 2)
+        self.assertEqual(len({x["test_id"] for x in result.records}), 1)
+        self.assertTrue(report["all_passed"])
+
+

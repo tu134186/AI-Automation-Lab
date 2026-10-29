@@ -73,3 +73,8 @@ scripts/build_bundle.py 在原始交付核验通过后，把 12 个原始交付�
 报告发布 Job 下载两个产物，核对完整 ZIP 的 SHA-256 后，将其保存为 reports-latest/complete-delivery.zip，并写对应 .sha256；手机总览提供固定下载。
 完整包内部文件是原始 12 项，额外的总览 README、snapshot.json 和 ZIP 自身不参与递归校验。ZIP 的校验值是外置独立文件。
 固定文件随成功快照更新，旧快照仍可从报告分支提交历史追溯；最新源 Commit 见包内 manifest.json 和手机总览。
+
+## 重复测试标识与触发去重
+相同参数的 subTest 连续失败，或同一个 test_id 被重复执行时，显示名称加入执行编号，JSON 另保留原始 test_id，避免重复名称导致整份报告导出中断。
+PR 已打开后，源码提交由 push 工作流验证并发布；pull_request 仅在 opened、reopened、ready_for_review 时进行合并视图验收，避免同一提交同时触发两套相同检查。
+PR 更新后最新源 Commit 的 push 检查是当前代码验证；旧合并视图验收仍对应原 Commit。正式合并前可在转为 ready_for_review 时再次验证最新合并视图。

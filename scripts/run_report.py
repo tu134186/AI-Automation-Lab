@@ -14,8 +14,18 @@ class Collector(unittest.TextTestResult):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.records = []
+        self.record_names = set()
+        self.occurrences = {}
     def record(self, test, status, reason=""):
-        self.records.append({"name": test.id(), "status": status, "reason": reason})
+        test_id = str(test.id())
+        occurrence = self.occurrences.get(test_id, 0) + 1
+        name = test_id if occurrence == 1 else f"{test_id} [执行 {occurrence}]"
+        while name in self.record_names:
+            occurrence += 1
+            name = f"{test_id} [执行 {occurrence}]"
+        self.occurrences[test_id] = occurrence
+        self.record_names.add(name)
+        self.records.append({"name": name, "test_id": test_id, "status": status, "reason": reason})
     def addSuccess(self, test):
         super().addSuccess(test)
         self.record(test, "success")
@@ -65,3 +75,4 @@ def main():
 
 if __name__ == "__main__":
     raise SystemExit(main())
+
