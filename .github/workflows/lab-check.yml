@@ -1,0 +1,28 @@
+name: Automation Lab Check
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'AGENTS.md'
+      - 'scripts/**'
+      - 'lab_report.py'
+      - 'tests/**'
+      - 'examples/**'
+      - '.github/workflows/lab-check.yml'
+concurrency:
+  group: lab-check-${{ github.ref }}
+  cancel-in-progress: true
+permissions:
+  contents: read
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run dependency-free smoke check
+        run: python3 scripts/self_check.py
+      - name: Test task summary and error handling
+        run: python3 -m unittest discover -s tests -v
+      - name: Run sample
+        run: python3 lab_report.py examples/tasks.json --markdown report.md --html report.html
