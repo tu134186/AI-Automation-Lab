@@ -23,6 +23,38 @@ def state(run):
         return "进行中" if run.get("status") == "in_progress" else "排队／等待"
     return LABELS.get(run.get("conclusion"), "结论未知")
 
+BAD = {"failure", "timed_out", "startup_failure"}
+
+def comparable(item):
+    return item.get("status") == "completed" and item.get("conclusion") in BAD | {"success"}
+
+def comparisons(items):
+    """Compare only completed measurable runs of the same workflow and branch."""
+    for index, item in enumerate(items):
+        item["comparison"] = "暂无可比较记录"
+        item["previous_run_url"] = ""
+        if not comparable(item):
+            item["comparison"] = "本次结果不参与通过／失败对比"
+            continue
+        key = item.get("workflow_key")
+        if not key or not item.get("branch"):
+            continue
+        previous = next((older for older in items[index + 1:]
+                         if older.get("workflow_key") == key
+                         and older.get("branch") == item["branch"] and comparable(older)), None)
+        if previous is None:
+            continue
+        now_bad = item["conclusion"] in BAD
+        old_bad = previous["conclusion"] in BAD
+        item["comparison"] = ("持续失败" if old_bad else "新增失败") if now_bad else ("恢复通过" if old_bad else "持续通过")
+        item["previous_run_url"] = previous["url"]
+    eligible = [x for x in items if comparable(x)]
+    passed = sum(x["conclusion"] == "success" for x in eligible)
+    return {"measurable": len(eligible), "passed": passed,
+            "failed": len(eligible) - passed,
+            "success_rate": round(100 * passed / len(eligible), 1) if eligible else None,
+            "excluded": len(items) - len(eligible)}
+
 def collect(get, current_run=""):
     payload = get("actions/runs?per_page=11")
     runs = [x for x in payload.get("workflow_runs", [])
@@ -36,6 +68,7 @@ def collect(get, current_run=""):
             raise ValueError("无效任务 ID")
         base = f"https://github.com/{REPOSITORY}/actions/runs/{ident}"
         item = {"id": ident, "name": str(run.get("name") or "未命名任务"),
+                "workflow_key": str(run.get("workflow_id") or run.get("path") or ""),
                 "state": state(run), "status": run.get("status"),
                 "conclusion": run.get("conclusion"), "branch": str(run.get("head_branch") or ""),
                 "commit": str(run.get("head_sha") or ""),
@@ -75,7 +108,8 @@ def collect(get, current_run=""):
         elif run.get("status") == "completed":
             item["notes"].append("本次只查询最近 5 个已完成任务的产物。")
         items.append(item)
-    return {"schema": 1, "repository": REPOSITORY,
+    metrics = comparisons(items)
+    return {"schema": 2, "repository": REPOSITORY, "metrics": metrics,
             "collected_at": datetime.now(timezone.utc).isoformat(),
             "scope": "本仓库最近 10 次运行；排除本次运行；不是实时监控。",
             "runs": items}
@@ -83,12 +117,19 @@ def collect(get, current_run=""):
 def markdown(data):
     lines = ["## 最近云端任务", "", data["scope"], "",
              "采集时间（UTC）：" + data["collected_at"], ""]
+    m = data["metrics"]
+    rate = "暂无有效结果" if m["success_rate"] is None else str(m["success_rate"]) + "%"
+    lines.extend([f"有效结果：{m['measurable']} · 通过：{m['passed']} · 失败：{m['failed']} · 成功率：{rate}",
+                  f"未计入成功率：{m['excluded']}。取消、跳过、等待和未知结论不计入分母。", ""])
     for item in data["runs"]:
         lines.extend(["### " + escape_md(item["name"]) + " · " + item["state"], "",
                       f"- 任务：[{item['id']}]({item['url']})",
                       "- 分支：" + escape_md(item["branch"]),
                       "- Commit：" + escape_md(item["commit"]),
                       "- 启动时间（UTC）：" + escape_md(item["created_at"])])
+        lines.append("- 同工作流、同分支最近有效结果对比：" + item["comparison"])
+        if item["previous_run_url"]:
+            lines.append(f'- [对比的上次任务]({item["previous_run_url"]})')
         for step in item["failed_steps"]:
             lines.append("- 失败步骤：" + escape_md(step))
         for artifact in item["artifacts"]:
@@ -106,13 +147,18 @@ def html_section(data):
     rows = []
     for item in data["runs"]:
         links = f'<a href="{esc(item["url"])}">任务 {item["id"]}</a>'
+        if item["previous_run_url"]:
+            links += f' · <a href="{esc(item["previous_run_url"])}">上次有效任务</a>'
         for artifact in item["artifacts"]:
             links += f' · <a href="{esc(artifact["url"])}">下载：{esc(artifact["name"])}</a>'
-        details = "\n".join(["失败步骤：" + x for x in item["failed_steps"]] + item["notes"])
+        details = "\n".join([item["comparison"]] + ["失败步骤：" + x for x in item["failed_steps"]] + item["notes"])
         rows.append(f'<article><h3>{esc(item["name"])} · {esc(item["state"])}</h3>'
                     f'<div class="meta">{esc(item["branch"])} · {esc(item["commit"][:7])}<br>{esc(item["created_at"])}</div>'
                     f'<p>{links}</p><pre>{esc(details)}</pre></article>')
-    return ('<section><h2>最近云端任务</h2><p class="meta">'
+    m = data["metrics"]
+    rate = "暂无有效结果" if m["success_rate"] is None else str(m["success_rate"]) + "%"
+    overview = f'<p>有效结果 {m["measurable"]} · 通过 {m["passed"]} · 失败 {m["failed"]} · 成功率 {rate}</p><p class="meta">取消、跳过、等待和未知结论不计入成功率；只比较同工作流、同分支在当前快照内的有效结果。</p>'
+    return ('<section><h2>最近云端任务</h2>' + overview + '<p class="meta">'
             + esc(data["scope"]) + "<br>采集时间（UTC）：" + esc(data["collected_at"]) + "</p>"
             + ("".join(rows) or "<p>没有返回历史任务，不能判断为全部通过。</p>") + "</section>")
 
@@ -147,3 +193,4 @@ def main():
 
 if __name__ == "__main__":
     raise SystemExit(main())
+
