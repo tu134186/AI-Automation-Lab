@@ -1,29 +1,30 @@
-name: Bugfix proof
+name: Unattended targeted repair
 on:
   push:
     branches: ['test/bugfix-proof-20261029']
     paths: ['bugfix_demo/**', '.github/workflows/bugfix-proof.yml']
 permissions:
-  contents: read
+  contents: write
 concurrency:
   group: bugfix-proof-${{ github.ref }}
   cancel-in-progress: true
 jobs:
-  regression:
+  repair:
     runs-on: ubuntu-latest
     timeout-minutes: 3
     steps:
       - uses: actions/checkout@v4
-      - name: Run regression tests
-        run: python3 bugfix_demo/ci.py
+      - name: Detect, repair, retest and commit
+        run: python3 bugfix_demo/auto_repair.py
       - name: Publish summary
         if: always()
         run: cat bugfix_demo/report.md >> "$GITHUB_STEP_SUMMARY"
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: regression-evidence
+          name: unattended-repair-evidence
           path: |
             bugfix_demo/report.md
-            bugfix_demo/tests.log
+            bugfix_demo/before.log
+            bugfix_demo/after.log
           retention-days: 14
