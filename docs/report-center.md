@@ -42,3 +42,13 @@ AI-Automation-Lab-COMMIT-source.zip：当前 Commit 对应完整源码。
 离线复核：python3 scripts/validate_delivery.py reports --commit FULL_COMMIT --run-id RUN_ID --verify。
 需要先解压完整源码 ZIP，然后用其中脚本指向报告文件夹；脚本仅使用 Python 标准库。
 SHA-256 校验用于发现损坏或错包，不是数字签名；交付一致性通过也不表示历史任务没有未解决失败。
+
+## 固定报告分支
+报告任务只读；单独 publish_snapshot Job 在整个报告任务成功后，下载本次产物，复核文件集合、大小、SHA-256、测试状态、Commit 和 Run ID。
+发布器确认开发分支仍指向本次 Commit，避免过时任务覆盖最新报告。只可写 reports-latest 分支；首次创建，后续非强制快进更新。
+该分支保存原交付包全部 12 个文件（含源码 ZIP），另生成 README.md 和 snapshot.json 作为入口与来源说明。代码不执行下载包中的任何内容。
+固定入口：https://github.com/tu134186/AI-Automation-Lab/blob/reports-latest/report.md
+独立报告分支内容不依赖 Actions 30 天保留期；删除仓库、分支或文件后仍会丢失，不是外部备份。
+该分支额外的 README.md 和 snapshot.json 不属于原交付清单；离线核验时使用原始 12 个交付文件。
+最新任务失败、核验失败或发布失败时不会将其标为成功，固定入口仍可能是旧快照；查看来源 Commit、Run ID 及更新时间确认。
+只在指定开发分支成功运行后发布，PR 和其他分支不会写报告快照。不合并 main、不部署网站、不自动调用 AI。

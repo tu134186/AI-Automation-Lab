@@ -2,6 +2,11 @@
 
 ## 手机查看入口
 
+[固定查看最新中文报告](https://github.com/tu134186/AI-Automation-Lab/blob/reports-latest/report.md) · [最新诊断清单](https://github.com/tu134186/AI-Automation-Lab/blob/reports-latest/diagnosis.md)
+
+上述固定入口由独立 reports-latest 分支保存已核验快照，直到该分支或文件被删除，不依赖 Actions 产物保留天数。最新任务失败时保留上次成功快照，必须核对报告中的 Commit 和采集时间。
+
+
 [打开报告中心任务列表](https://github.com/tu134186/AI-Automation-Lab/actions?query=branch%3Afeature%2Freport-center-20261029)
 
 这是固定入口，不需要保存每次 Run ID。打开列表中最新的 Automation Lab Check 任务，查看摘要中的中文报告。
