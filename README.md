@@ -4,15 +4,15 @@
 
 | 项目 | 结果 |
 | --- | --- |
-| 本次自动检查 | 全部通过，共 70 项 |
+| 本次自动检查 | 全部通过，共 76 项 |
 | 历史待处理 | 0 项，独立于本次检查结果 |
 | 已暂停实验 | 1 项，保留原结论，不计为修复 |
-| 历史扫描 | 18 次 |
-| 快照更新时间 | 2026/10/29 23:42:36（北京时间） |
+| 历史扫描 | 19 次 |
+| 快照更新时间 | 2026/10/29 23:48:18（北京时间） |
 
-源码 Commit：c42c834bb23a0b93b095cefee5f5a8d08f3a8f0f
+源码 Commit：e9116a7d57ffe62b895c65ad081af908a2ab50d4
 
-[本快照对应任务](https://github.com/tu134186/AI-Automation-Lab/actions/runs/40904236520) · [核验说明](delivery.md)
+[本快照对应任务](https://github.com/tu134186/AI-Automation-Lab/actions/runs/40905190833) · [核验说明](delivery.md)
 
 ## 当前任务状态
 
@@ -32,12 +32,14 @@
 
 ## 查看与下载
 
+- [下载完整交付包：报告、诊断、日志、校验清单和源码](complete-delivery.zip)
+- [完整包 SHA-256](complete-delivery.zip.sha256)
 - [完整中文报告](report.md)
 - [待处理清单](diagnosis.md)
 - [历史任务与产物入口](history.md)
-- [下载对应源码 ZIP](AI-Automation-Lab-c42c834-source.zip)
+- [下载对应源码 ZIP](AI-Automation-Lab-e9116a7-source.zip)
 - [文件校验清单](SHA256SUMS.txt)
 
 本分支保存快照，不受 Actions 产物保留期限制；删除仓库、分支或文件后仍会丢失。主分支未因报告发布而修改。
 
-原交付校验文件不覆盖本分支额外生成的 README.md 与 snapshot.json。
+完整 ZIP 有独立 SHA-256；包内清单校验原始交付文件。本分支额外的总览与来源说明不在包内清单范围。

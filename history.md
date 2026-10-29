@@ -1,6 +1,6 @@
 ## 待处理清单
 
-覆盖本次已扫描的 18 次历史运行（最多 100 次）；不代表整个仓库全部故障。
+覆盖本次已扫描的 19 次历史运行（最多 100 次）；不代表整个仓库全部故障。
 
 排查方向依据失败步骤名称，不是已确认根因；未自动重试或修改历史任务。
 
@@ -14,12 +14,22 @@
   [原任务证据](https://github.com/tu134186/AI-Automation-Lab/actions/runs/40893017732)
 ## 最近云端任务
 
-已扫描本仓库最近 18 次运行（最多 100 次）；列表仅展示最近 10 次；统计与待处理覆盖扫描范围；排除本次运行，不是实时监控。
+已扫描本仓库最近 19 次运行（最多 100 次）；列表仅展示最近 10 次；统计与待处理覆盖扫描范围；排除本次运行，不是实时监控。
 
-采集时间（UTC）：2026-10-29T15:42:22.717612+00:00
+采集时间（UTC）：2026-10-29T15:48:06.538229+00:00
 
-有效结果：18 · 通过：14 · 失败：4 · 成功率：77.8%
+有效结果：19 · 通过：15 · 失败：4 · 成功率：78.9%
 未计入成功率：0。取消、跳过、等待和未知结论不计入分母。
+
+### Automation Lab Check · 通过
+
+- 任务：[40904236520](https://github.com/tu134186/AI-Automation-Lab/actions/runs/40904236520)
+- 分支：feature/report-center-20261029
+- Commit：c42c834bb23a0b93b095cefee5f5a8d08f3a8f0f
+- 启动时间（UTC）：2026-10-29T15:42:12Z
+- 同工作流、同分支最近有效结果对比：持续通过
+- [对比的上次任务](https://github.com/tu134186/AI-Automation-Lab/actions/runs/40903598703)
+- <a href="https://github.com/tu134186/AI-Automation-Lab/actions/runs/40904236520/artifacts/12908989940">下载：report-center-c42c834bb23a0b93b095cefee5f5a8d08f3a8f0f</a>
 
 ### Automation Lab Check · 通过
 
@@ -69,7 +79,7 @@
 - 启动时间（UTC）：2026-10-29T15:21:58Z
 - 同工作流、同分支最近有效结果对比：持续通过
 - [对比的上次任务](https://github.com/tu134186/AI-Automation-Lab/actions/runs/40900309315)
-- <a href="https://github.com/tu134186/AI-Automation-Lab/actions/runs/40900804926/artifacts/12908378957">下载：report-center-504d02e9a45d7d96b362d39abfe6e82752e5738b</a>
+- 本次只查询最近 5 个已完成任务的产物。
 
 ### Automation Lab Check · 通过
 
@@ -108,15 +118,5 @@
 - 启动时间（UTC）：2026-10-29T14:35:34Z
 - 同工作流、同分支最近有效结果对比：暂无可比较记录
 - 失败步骤：generate → Check model authorization
-- 本次只查询最近 5 个已完成任务的产物。
-
-### Unattended targeted repair · 通过
-
-- 任务：[40892392706](https://github.com/tu134186/AI-Automation-Lab/actions/runs/40892392706)
-- 分支：test/bugfix-proof-20261029
-- Commit：ec83340b43144c4c13c6b1fec4ac18e5234e7482
-- 启动时间（UTC）：2026-10-29T14:31:52Z
-- 同工作流、同分支最近有效结果对比：持续通过
-- [对比的上次任务](https://github.com/tu134186/AI-Automation-Lab/actions/runs/40891995218)
 - 本次只查询最近 5 个已完成任务的产物。
 

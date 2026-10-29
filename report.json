@@ -2,9 +2,9 @@
   "schema": 1,
   "state": "全部通过",
   "all_passed": true,
-  "total": 70,
+  "total": 76,
   "counts": {
-    "success": 70,
+    "success": 76,
     "failure": 0,
     "running": 0,
     "skipped": 0
@@ -12,14 +12,44 @@
   "context": {
     "repository": "tu134186/AI-Automation-Lab",
     "branch": "feature/report-center-20261029",
-    "commit": "c42c834bb23a0b93b095cefee5f5a8d08f3a8f0f",
-    "changes": "feat: separate paused AI experiments from actionable failures without rewriting evidence\n\n .github/workflows/buildmate.yml  |  95 +++++++++++++++++\n .github/workflows/lab-check.yml  | 102 +++++++++++++++++++\n AGENTS.md                        |  21 ++++\n README.md                        |  74 ++++++++++++++\n build-config.json                |   1 +\n docs/development-test.md         |  12 +++\n docs/report-center.md            |  67 ++++++++++++\n docs/verification-2026-10-29.md  |  26 +++++\n examples/report.html             |  23 +++++\n examples/report.md               |  12 +++\n examples/tasks.json              |   4 +\n lab_report.py                    | 112 ++++++++++++++++++++\n report_center.py                 | 142 ++++++++++++++++++++++++++\n report_policy.json               |  11 ++\n scripts/publish_report.cjs       | 145 ++++++++++++++++++++++++++\n scripts/report_policy.py         |  30 ++++++\n scripts/run_history.py           | 214 +++++++++++++++++++++++++++++++++++++++\n scripts/run_report.py            |  67 ++++++++++++\n scripts/self_check.py            |  14 +++\n scripts/test_publish_report.cjs  | 106 +++++++++++++++++++\n scripts/triage.py                | 106 +++++++++++++++++++\n scripts/validate_delivery.py     | 138 +++++++++++++++++++++++++\n tests/test_delivery.py           |  93 +++++++++++++++++\n tests/test_history_comparison.py |  38 +++++++\n tests/test_lab_report.py         | 134 ++++++++++++++++++++++++\n tests/test_publish_snapshot.py   |  12 +++\n tests/test_report_center.py      |  50 +++++++++\n tests/test_report_collector.py   |  27 +++++\n tests/test_report_policy.py      |  53 ++++++++++\n tests/test_run_history.py        |  64 ++++++++++++\n tests/test_triage.py             |  54 ++++++++++\n tests/test_wider_history.py      |  48 +++++++++\n 32 files changed, 2095 insertions(+)",
-    "run_url": "https://github.com/tu134186/AI-Automation-Lab/actions/runs/40904236520",
-    "commit_url": "https://github.com/tu134186/AI-Automation-Lab/commit/c42c834bb23a0b93b095cefee5f5a8d08f3a8f0f"
+    "commit": "e9116a7d57ffe62b895c65ad081af908a2ab50d4",
+    "changes": "feat: persist a complete offline delivery ZIP with independent checksum verification\n\n .github/workflows/buildmate.yml  |  95 +++++++++++++++++\n .github/workflows/lab-check.yml  | 116 +++++++++++++++++++++\n AGENTS.md                        |  21 ++++\n README.md                        |  77 ++++++++++++++\n build-config.json                |   1 +\n docs/development-test.md         |  12 +++\n docs/report-center.md            |  75 ++++++++++++++\n docs/verification-2026-10-29.md  |  26 +++++\n examples/report.html             |  23 +++++\n examples/report.md               |  12 +++\n examples/tasks.json              |   4 +\n lab_report.py                    | 112 ++++++++++++++++++++\n report_center.py                 | 142 ++++++++++++++++++++++++++\n report_policy.json               |  11 ++\n scripts/build_bundle.py          |  88 ++++++++++++++++\n scripts/publish_report.cjs       | 167 ++++++++++++++++++++++++++++++\n scripts/report_policy.py         |  30 ++++++\n scripts/run_history.py           | 214 +++++++++++++++++++++++++++++++++++++++\n scripts/run_report.py            |  67 ++++++++++++\n scripts/self_check.py            |  14 +++\n scripts/test_publish_report.cjs  | 116 +++++++++++++++++++++\n scripts/triage.py                | 106 +++++++++++++++++++\n scripts/validate_delivery.py     | 138 +++++++++++++++++++++++++\n tests/test_bundle.py             |  42 ++++++++\n tests/test_delivery.py           |  93 +++++++++++++++++\n tests/test_history_comparison.py |  38 +++++++\n tests/test_lab_report.py         | 134 ++++++++++++++++++++++++\n tests/test_publish_snapshot.py   |  12 +++\n tests/test_report_center.py      |  50 +++++++++\n tests/test_report_collector.py   |  27 +++++\n tests/test_report_policy.py      |  53 ++++++++++\n tests/test_run_history.py        |  64 ++++++++++++\n tests/test_triage.py             |  54 ++++++++++\n tests/test_wider_history.py      |  48 +++++++++\n 34 files changed, 2282 insertions(+)",
+    "run_url": "https://github.com/tu134186/AI-Automation-Lab/actions/runs/40905190833",
+    "commit_url": "https://github.com/tu134186/AI-Automation-Lab/commit/e9116a7d57ffe62b895c65ad081af908a2ab50d4"
   },
   "tasks": [
     {
       "name": "源码基础检查",
+      "status": "success",
+      "reason": ""
+    },
+    {
+      "name": "test_bundle.BundleTests.test_bad_source_cannot_be_packaged",
+      "status": "success",
+      "reason": ""
+    },
+    {
+      "name": "test_bundle.BundleTests.test_cannot_overwrite_input_folder",
+      "status": "success",
+      "reason": ""
+    },
+    {
+      "name": "test_bundle.BundleTests.test_complete_offline_bundle",
+      "status": "success",
+      "reason": ""
+    },
+    {
+      "name": "test_bundle.BundleTests.test_modified_zip_rejected",
+      "status": "success",
+      "reason": ""
+    },
+    {
+      "name": "test_bundle.BundleTests.test_unexpected_archive_entry_rejected",
+      "status": "success",
+      "reason": ""
+    },
+    {
+      "name": "test_bundle.BundleTests.test_wrong_run_rejected_even_with_valid_checksum",
       "status": "success",
       "reason": ""
     },

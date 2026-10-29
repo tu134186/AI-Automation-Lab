@@ -1,3 +1,9 @@
+test_bad_source_cannot_be_packaged (test_bundle.BundleTests.test_bad_source_cannot_be_packaged) ... ok
+test_cannot_overwrite_input_folder (test_bundle.BundleTests.test_cannot_overwrite_input_folder) ... ok
+test_complete_offline_bundle (test_bundle.BundleTests.test_complete_offline_bundle) ... ok
+test_modified_zip_rejected (test_bundle.BundleTests.test_modified_zip_rejected) ... ok
+test_unexpected_archive_entry_rejected (test_bundle.BundleTests.test_unexpected_archive_entry_rejected) ... ok
+test_wrong_run_rejected_even_with_valid_checksum (test_bundle.BundleTests.test_wrong_run_rejected_even_with_valid_checksum) ... ok
 test_checksum_list_tamper_detected (test_delivery.DeliveryTests.test_checksum_list_tamper_detected) ... ok
 test_damaged_or_added_file_detected (test_delivery.DeliveryTests.test_damaged_or_added_file_detected) ... ok
 test_diagnosis_mismatch_rejected (test_delivery.DeliveryTests.test_diagnosis_mismatch_rejected) ... ok
@@ -69,6 +75,6 @@ test_scan_bounded_and_current_excluded (test_wider_history.WiderHistoryTests.tes
 test_unresolved_failure_gets_priority_over_resolved_history (test_wider_history.WiderHistoryTests.test_unresolved_failure_gets_priority_over_resolved_history) ... ok
 
 ----------------------------------------------------------------------
-Ran 69 tests in 0.874s
+Ran 75 tests in 1.031s
 
 OK
