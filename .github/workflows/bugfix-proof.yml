@@ -14,19 +14,16 @@ jobs:
     timeout-minutes: 3
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 2
-      - name: Reproduce seeded bugs and verify fix
-        run: python3 bugfix_demo/verify.py
+      - name: Run regression tests
+        run: python3 bugfix_demo/ci.py
       - name: Publish summary
         if: always()
         run: cat bugfix_demo/report.md >> "$GITHUB_STEP_SUMMARY"
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: bugfix-proof
+          name: regression-evidence
           path: |
             bugfix_demo/report.md
-            bugfix_demo/before.log
-            bugfix_demo/after.log
+            bugfix_demo/tests.log
           retention-days: 14
