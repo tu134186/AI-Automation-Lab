@@ -43,6 +43,8 @@ test_invalid (test_report_center.CenterTests.test_invalid) ... ok
 test_offline_mobile (test_report_center.CenterTests.test_offline_mobile) ... ok
 test_states (test_report_center.CenterTests.test_states) ... ok
 test_failure_skip_and_error_are_recorded (test_report_collector.CollectorTests.test_failure_skip_and_error_are_recorded) ... ok
+test_repeated_subtest_ids_keep_both_failures_exportable (test_report_collector.CollectorTests.test_repeated_subtest_ids_keep_both_failures_exportable) ... ok
+test_repeated_test_execution_preserves_original_id (test_report_collector.CollectorTests.test_repeated_test_execution_preserves_original_id) ... ok
 test_subtest_failure_does_not_pass_parent (test_report_collector.CollectorTests.test_subtest_failure_does_not_pass_parent) ... ok
 test_invalid_or_duplicate_rules_rejected (test_report_policy.PolicyTests.test_invalid_or_duplicate_rules_rejected) ... ok
 test_missing_policy_never_hides_failure (test_report_policy.PolicyTests.test_missing_policy_never_hides_failure) ... ok
@@ -75,6 +77,6 @@ test_scan_bounded_and_current_excluded (test_wider_history.WiderHistoryTests.tes
 test_unresolved_failure_gets_priority_over_resolved_history (test_wider_history.WiderHistoryTests.test_unresolved_failure_gets_priority_over_resolved_history) ... ok
 
 ----------------------------------------------------------------------
-Ran 75 tests in 1.031s
+Ran 77 tests in 1.313s
 
 OK
