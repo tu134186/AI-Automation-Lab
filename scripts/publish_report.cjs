@@ -56,11 +56,14 @@ function renderOverview(report, history, diagnosis, snapshot) {
   const current = repo + '/actions?query=branch%3Afeature%2Freport-center-20261029';
   const badge = repo + '/actions/workflows/lab-check.yml/badge.svg?branch=feature%2Freport-center-20261029';
   const source = 'AI-Automation-Lab-' + snapshot.source_commit.slice(0,7) + '-source.zip';
+  const paused = diagnosis.paused || [];
+  if (!Array.isArray(paused)) throw new Error('Invalid paused evidence');
   const lines = ['# 报告中心 · 手机总览','',
     '## 已保存的核验快照','',
     '| 项目 | 结果 |','| --- | --- |',
     '| 本次自动检查 | 全部通过，共 ' + report.total + ' 项 |',
     '| 历史待处理 | ' + diagnosis.items.length + ' 项，独立于本次检查结果 |',
+    '| 已暂停实验 | ' + paused.length + ' 项，保留原结论，不计为修复 |',
     '| 历史扫描 | ' + history.scanned_count + ' 次 |',
     '| 快照更新时间 | ' + local + '（北京时间） |','',
     '源码 Commit：' + snapshot.source_commit,'',
@@ -78,6 +81,14 @@ function renderOverview(report, history, diagnosis, snapshot) {
       lines.push('  [查看证据任务](' + repo + '/actions/runs/' + item.id + ')');
   }
   if (diagnosis.items.length > 5) lines.push('其余事项请查看完整待处理清单。');
+  lines.push('','## 已暂停实验','');
+  if (!paused.length) lines.push('本次扫描没有匹配的暂停实验。');
+  for (const item of paused.slice(0,5)) {
+    lines.push('- **' + md(String(item.name || '实验').slice(0,100)) + '**：' + md(item.pause_reason || '原因见诊断清单。'));
+    lines.push('  原始结果：' + md(item.original_conclusion || '未知') + '，暂停不代表通过或已修复。');
+    if (Number.isSafeInteger(item.id) && item.id > 0)
+      lines.push('  [原任务证据](' + repo + '/actions/runs/' + item.id + ')');
+  }
   lines.push('','## 查看与下载','',
     '- [完整中文报告](report.md)',
     '- [待处理清单](diagnosis.md)',

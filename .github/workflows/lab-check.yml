@@ -3,9 +3,9 @@ on:
   workflow_dispatch:
   push:
     branches: ['feature/report-center-20261029']
-    paths: ['report_center.py', 'lab_report.py', 'scripts/**', 'tests/**', '.github/workflows/lab-check.yml']
+    paths: ['report_policy.json', 'report_center.py', 'lab_report.py', 'scripts/**', 'tests/**', '.github/workflows/lab-check.yml']
   pull_request:
-    paths: ['AGENTS.md', 'scripts/**', 'report_center.py', 'lab_report.py', 'tests/**', 'examples/**', '.github/workflows/lab-check.yml']
+    paths: ['AGENTS.md', 'scripts/**', 'report_policy.json', 'report_center.py', 'lab_report.py', 'tests/**', 'examples/**', '.github/workflows/lab-check.yml']
 concurrency:
   group: lab-check-${{ github.ref }}
   cancel-in-progress: true

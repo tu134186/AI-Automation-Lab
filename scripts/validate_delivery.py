@@ -14,6 +14,7 @@ sys.path.insert(0, str(ROOT))
 from report_center import build_report, render_markdown, render_html
 from scripts.run_history import comparisons, markdown as history_md, html_section
 from scripts.triage import build_triage, render_md as diagnosis_md
+from scripts.report_policy import normalize_policy
 
 def read_json(root, name):
     return json.loads((root / name).read_text(encoding="utf-8"))
@@ -47,7 +48,8 @@ def validate(root, sha, run_id=""):
     if history["metrics"] != comparisons(copy.deepcopy(scanned)):
         raise ValueError("历史统计不一致")
     diagnosis = read_json(root, "diagnosis.json")
-    if diagnosis != history["triage"] or diagnosis != build_triage(scanned):
+    policy = normalize_policy(history.get("policy"))
+    if diagnosis != history["triage"] or diagnosis != build_triage(scanned, policy):
         raise ValueError("诊断清单与历史证据不一致")
     texts = {"report.md": render_markdown(report), "history.md": history_md(history),
              "diagnosis.md": diagnosis_md(diagnosis),
@@ -62,6 +64,8 @@ def validate(root, sha, run_id=""):
         names = archive.namelist()
         if "report_center.py" not in names or "scripts/run_history.py" not in names:
             raise ValueError("源码 ZIP 缺少报告核心文件")
+        if json.loads(archive.read("report_policy.json")) != policy:
+            raise ValueError("历史分类策略与源码 ZIP 不一致")
         if any(name.startswith("/") or ".." in Path(name).parts for name in names):
             raise ValueError("源码 ZIP 含不安全路径")
     return report, history

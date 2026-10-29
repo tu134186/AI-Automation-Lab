@@ -47,6 +47,11 @@ async function main() {
     assert.match(dangerous,/历史待处理 \| 1 项/);
     assert.throws(()=>renderOverview({context:{commit:sha},all_passed:false,total:63},
       {scanned_count:16},{items:[]},snapshot));
+    const paused=renderOverview({context:{commit:sha},all_passed:true,total:63},
+      {scanned_count:16},{items:[],paused:[{id:7,name:'AI experiment',pause_reason:'暂不开通 API',original_conclusion:'failure'}]},snapshot);
+    assert.match(paused,/已暂停实验 \| 1 项/);
+    assert.match(paused,/原始结果：failure/);
+    assert.match(paused,/暂停不代表通过或已修复/);
     assert.throws(()=>validateSnapshot(folder,sha,456));
     assert.throws(()=>validateSnapshot(folder,'b'.repeat(40),123));
     fs.appendFileSync(path.join(folder,'report.md'),'corrupt');

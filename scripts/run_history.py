@@ -13,6 +13,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from report_center import escape_md
 from scripts.triage import build_triage, render_md as triage_md, render_html as triage_html
+from scripts.report_policy import normalize_policy, load_policy
 
 REPOSITORY = "tu134186/AI-Automation-Lab"
 LABELS = {"success": "通过", "failure": "失败", "cancelled": "已取消",
@@ -62,6 +63,7 @@ def run_item(run):
         raise ValueError("无效任务 ID")
     return {"id": ident, "name": str(run.get("name") or "未命名任务"),
             "workflow_key": str(run.get("workflow_id") or run.get("path") or ""),
+            "workflow_path": str(run.get("path") or ""),
             "state": state(run), "status": run.get("status"),
             "conclusion": run.get("conclusion"), "branch": str(run.get("head_branch") or ""),
             "commit": str(run.get("head_sha") or ""),
@@ -69,12 +71,13 @@ def run_item(run):
             "url": f"https://github.com/{REPOSITORY}/actions/runs/{ident}",
             "failed_steps": [], "log_links": [], "artifacts": [], "notes": []}
 
-def collect(get, current_run=""):
+def collect(get, current_run="", policy=None):
+    policy = normalize_policy(policy)
     payload = get("actions/runs?per_page=100")
     runs = [x for x in payload.get("workflow_runs", [])
             if str(x.get("id")) != str(current_run)][:100]
     probes = [run_item(run) for run in runs]
-    active = [x["id"] for x in build_triage(probes)["items"] if x["kind"] == "失败待处理"]
+    active = [x["id"] for x in build_triage(probes, policy)["items"] if x["kind"] == "失败待处理"]
     historical = [x["id"] for x in probes if x["conclusion"] in BAD and x["id"] not in active]
     diagnostic_ids = set((active + historical)[:3])
     items = []
@@ -119,7 +122,7 @@ def collect(get, current_run=""):
             item["notes"].append("本次只查询最近 5 个已完成任务的产物。")
         items.append(item)
     metrics = comparisons(items)
-    return {"schema": 4, "repository": REPOSITORY, "metrics": metrics, "triage": build_triage(items),
+    return {"schema": 5, "repository": REPOSITORY, "policy": policy, "metrics": metrics, "triage": build_triage(items, policy),
             "collected_at": datetime.now(timezone.utc).isoformat(),
             "scope": f"已扫描本仓库最近 {len(items)} 次运行（最多 100 次）；列表仅展示最近 10 次；统计与待处理覆盖扫描范围；排除本次运行，不是实时监控。",
             "scanned_count": len(items), "scanned_runs": items, "runs": items[:10]}
@@ -186,9 +189,10 @@ def main():
                                        "X-GitHub-Api-Version": "2022-11-28"})
             with urlopen(request, timeout=15) as response:
                 return json.load(response)
-        data = collect(get, os.environ.get("GITHUB_RUN_ID", ""))
+        data = collect(get, os.environ.get("GITHUB_RUN_ID", ""), load_policy(ROOT / "report_policy.json"))
         print(f"History scanned={data['scanned_count']} visible={len(data['runs'])} pending={len(data['triage']['items'])}")
         print("Pending evidence run IDs:", ",".join(str(x["id"]) for x in data["triage"]["items"]) or "none")
+        print("Paused evidence run IDs:", ",".join(str(x["id"]) for x in data["triage"]["paused"]) or "none")
         (root / "diagnosis.json").write_text(json.dumps(data["triage"], ensure_ascii=False, indent=2), encoding="utf-8")
         (root / "diagnosis.md").write_text(triage_md(data["triage"]), encoding="utf-8")
         (root / "history.json").write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")

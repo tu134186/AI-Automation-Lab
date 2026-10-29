@@ -25,6 +25,7 @@ def fixture(root, sha=SHA):
         archive.comment=sha.encode()
         archive.writestr("report_center.py","x=1")
         archive.writestr("scripts/run_history.py","x=1")
+        archive.writestr("report_policy.json",json.dumps({"schema":1,"paused_workflows":[]}))
 
 class DeliveryTests(unittest.TestCase):
     def setUp(self):
@@ -79,6 +80,7 @@ class DeliveryTests(unittest.TestCase):
             (repo/"scripts").mkdir()
             (repo/"report_center.py").write_text("x=1")
             (repo/"scripts/run_history.py").write_text("x=1")
+            (repo/"report_policy.json").write_text(json.dumps({"schema":1,"paused_workflows":[]}))
             git("add",".")
             git("-c","user.name=Fixture","-c","user.email=fixture@example.invalid","commit","-qm","fixture")
             sha=git("rev-parse","HEAD")

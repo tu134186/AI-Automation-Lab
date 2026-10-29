@@ -1,0 +1,11 @@
+{
+  "schema": 1,
+  "paused_workflows": [
+    {
+      "workflow_path": ".github/workflows/ai-repair.yml",
+      "branch": "test/bugfix-proof-20261029",
+      "reason": "用户暂不开通付费 API，保留实验源码和失败证据，暂停继续接入。"
+    }
+  ]
+}
+
