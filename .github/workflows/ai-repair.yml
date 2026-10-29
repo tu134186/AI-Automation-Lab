@@ -1,0 +1,137 @@
+name: AI unattended repair
+on:
+  push:
+    branches: ['test/bugfix-proof-20261029']
+    paths: ['ai_repair_demo/**', 'ai_automation/**', '.github/workflows/ai-repair.yml']
+permissions:
+  contents: read
+concurrency:
+  group: ai-repair-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      needs_fix: ${{ steps.baseline.outcome == 'failure' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Test candidate validation
+        run: python3 -m unittest discover -s ai_automation -p 'test_*.py' -v
+      - name: Initial regression
+        id: baseline
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          python3 -m unittest discover -s ai_repair_demo -v 2>&1 | tee /tmp/ai-before.log
+      - name: Check model authorization
+        if: steps.baseline.outcome == 'failure'
+        env:
+          HAS_KEY: ${{ secrets.OPENAI_API_KEY != '' }}
+        run: |
+          if [ "$HAS_KEY" != "true" ]; then
+            echo '## AI 修复尚未接通' >> "$GITHUB_STEP_SUMMARY"
+            echo '离线校验通过；演示故障已复现；缺少仓库 Secret：OPENAI_API_KEY。没有调用模型，没有生成或提交修复。' >> "$GITHUB_STEP_SUMMARY"
+            echo '::error::BLOCKED_MISSING_OPENAI_API_KEY'
+            exit 78
+          fi
+      - name: Preserve initial evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ai-initial-evidence
+          path: /tmp/ai-before.log
+          retention-days: 14
+      - name: Generate candidate with Codex
+        if: steps.baseline.outcome == 'failure'
+        uses: openai/codex-action@c05cfd74ad95c626cdf05c6685e62becc3bf7813
+        with:
+          openai-api-key: ${{ secrets.OPENAI_API_KEY }}
+          working-directory: ai_repair_demo
+          permission-profile: ':workspace'
+          safety-strategy: drop-sudo
+          prompt: |
+            Fix the failing Python metrics tests in this laboratory directory.
+            Run python3 -m unittest discover -v to reproduce failures.
+            Read /tmp/ai-before.log as failure evidence.
+            Only change metrics.py. Do not change tests, workflow, parent directories,
+            or git history. Do not access credentials or perform network calls.
+            success_rate returns percentage of success among success/failure tasks;
+            cancelled, skipped, pending and unknown states are excluded.
+            No completed tasks returns 0.0; round to one decimal.
+            Diagnose and implement the repair yourself; no repair template is supplied.
+            Stop after producing the minimal fix.
+      - name: Export candidate
+        if: steps.baseline.outcome == 'failure'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ai-candidate
+          path: ai_repair_demo/metrics.py
+          retention-days: 14
+  verify:
+    needs: generate
+    if: needs.generate.outputs.needs_fix == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: ai-candidate
+          path: candidate
+      - name: Validate and test candidate without model credentials
+        run: |
+          python3 ai_automation/validate_candidate.py
+          set -o pipefail
+          python3 -m unittest discover -s ai_repair_demo -v 2>&1 | tee /tmp/ai-after.log
+      - name: Publish verified candidate
+        uses: actions/upload-artifact@v4
+        with:
+          name: ai-verified-candidate
+          path: ai_repair_demo/metrics.py
+          retention-days: 14
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ai-retest-evidence
+          path: /tmp/ai-after.log
+          retention-days: 14
+  publish:
+    needs: [generate, verify]
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: ai-verified-candidate
+          path: candidate
+      - name: Commit verified file only
+        uses: actions/github-script@v7
+        env:
+          EXPECTED_SHA: ${{ github.sha }}
+        with:
+          script: |
+            const fs = require('fs');
+            const data = fs.readFileSync('candidate/metrics.py');
+            if (!data.length || data.length > 12000) throw new Error('Invalid candidate');
+            const {owner, repo} = context.repo;
+            const branch = 'test/bugfix-proof-20261029';
+            if (context.ref !== 'refs/heads/' + branch) throw new Error('Invalid branch');
+            const head = await github.rest.git.getRef({owner, repo, ref:'heads/' + branch});
+            if (head.data.object.sha !== process.env.EXPECTED_SHA) throw new Error('Branch changed; stop');
+            const path = 'ai_repair_demo/metrics.py';
+            const original = await github.rest.repos.getContent({owner, repo, path, ref:branch});
+            const result = await github.rest.repos.createOrUpdateFileContents({
+              owner, repo, path, branch, sha:original.data.sha,
+              content:data.toString('base64'),
+              message:'fix(ai): repair metrics after independent regression verification'
+            });
+            await core.summary.addHeading('AI 修复完成')
+              .addRaw('独立复测通过，仅提交 metrics.py。\n')
+              .addLink('修复提交', result.data.commit.html_url).write();
