@@ -1,0 +1,337 @@
+{
+  "schema": 1,
+  "state": "全部通过",
+  "all_passed": true,
+  "total": 63,
+  "counts": {
+    "success": 63,
+    "failure": 0,
+    "running": 0,
+    "skipped": 0
+  },
+  "context": {
+    "repository": "tu134186/AI-Automation-Lab",
+    "branch": "feature/report-center-20261029",
+    "commit": "b8938edf68f978881d328e62a79e9efbb14746d9",
+    "changes": "feat: publish verified report snapshots to a persistent isolated branch\n\n .github/workflows/buildmate.yml  |  95 ++++++++++++++++++\n .github/workflows/lab-check.yml  | 102 +++++++++++++++++++\n AGENTS.md                        |  21 ++++\n README.md                        |  70 +++++++++++++\n build-config.json                |   1 +\n docs/development-test.md         |  12 +++\n docs/report-center.md            |  54 ++++++++++\n docs/verification-2026-10-29.md  |  26 +++++\n examples/report.html             |  23 +++++\n examples/report.md               |  12 +++\n examples/tasks.json              |   4 +\n lab_report.py                    | 112 +++++++++++++++++++++\n report_center.py                 | 142 ++++++++++++++++++++++++++\n scripts/publish_report.cjs       |  85 ++++++++++++++++\n scripts/run_history.py           | 210 +++++++++++++++++++++++++++++++++++++++\n scripts/run_report.py            |  67 +++++++++++++\n scripts/self_check.py            |  14 +++\n scripts/test_publish_report.cjs  |  82 +++++++++++++++\n scripts/triage.py                |  84 ++++++++++++++++\n scripts/validate_delivery.py     | 134 +++++++++++++++++++++++++\n tests/test_delivery.py           |  91 +++++++++++++++++\n tests/test_history_comparison.py |  38 +++++++\n tests/test_lab_report.py         | 134 +++++++++++++++++++++++++\n tests/test_publish_snapshot.py   |  12 +++\n tests/test_report_center.py      |  50 ++++++++++\n tests/test_report_collector.py   |  27 +++++\n tests/test_run_history.py        |  64 ++++++++++++\n tests/test_triage.py             |  54 ++++++++++\n tests/test_wider_history.py      |  48 +++++++++\n 29 files changed, 1868 insertions(+)",
+    "run_url": "https://github.com/tu134186/AI-Automation-Lab/actions/runs/40902839617",
+    "commit_url": "https://github.com/tu134186/AI-Automation-Lab/commit/b8938edf68f978881d328e62a79e9efbb14746d9"
+  },
+  "tasks": [
+    {
+      "name": "源码基础检查",
+      "status": "success",
+      "reason": ""
+    },
+    {
+      "name": "test_delivery.DeliveryTests.test_checksum_list_tamper_detected",
+      "status": "success",
+      "reason": ""
+    },
+    {
+      "name": "test_delivery.DeliveryTests.test_damaged_or_added_file_detected",
+      "status": "success",
+      "reason": ""
+    },
+    {
+      "name": "test_delivery.DeliveryTests.test_diagnosis_mismatch_rejected",
+      "status": "success",
+      "reason": ""
+    },
+    {
+      "name": "test_delivery.DeliveryTests.test_false_test_summary_rejected",
+      "status": "success",
+      "reason": ""
+    },
+    {
+      "name": "test_delivery.DeliveryTests.test_missing_file_rejected",
+      "status": "success",
+      "reason": ""
+    },
+    {
+      "name": "test_delivery.DeliveryTests.test_readable_report_mismatch_rejected",
+      "status": "success",
+      "reason": ""
+    },
+    {
+      "name": "test_delivery.DeliveryTests.test_real_git_archive_has_verifiable_commit",
+      "status": "success",
+      "reason": ""
+    },
+    {
+      "name": "test_delivery.DeliveryTests.test_source_commit_mismatch_rejected",
+      "status": "success",
+      "reason": ""
+    },
+    {
+      "name": "test_delivery.DeliveryTests.test_valid_delivery_and_standalone_verify",
+      "status": "success",
+      "reason": ""
+    },
+    {
+      "name": "test_delivery.DeliveryTests.test_wrong_commit_rejected",
+      "status": "success",
+      "reason": ""
+    },
+    {
+      "name": "test_history_comparison.ComparisonTests.test_different_workflows_or_branches_not_compared",
+      "status": "success",
+      "reason": ""
+    },
+    {
+      "name": "test_history_comparison.ComparisonTests.test_missing_identity_not_compared",
+      "status": "success",
+      "reason": ""
+    },
+    {
+      "name": "test_history_comparison.ComparisonTests.test_new_and_recovered_failures",
+      "status": "success",
+      "reason": ""
+    },
+    {
+      "name": "test_history_comparison.ComparisonTests.test_no_completed_results_not_zero_percent_success",
+      "status": "success",
+      "reason": ""
+    },
+    {
+      "name": "test_history_comparison.ComparisonTests.test_skip_cancelled_and_running_for_prior_result",
+      "status": "success",
+      "reason": ""
+    },
+    {
+      "name": "test_history_comparison.ComparisonTests.test_unknown_conclusion_excluded",
+      "status": "success",
+      "reason": ""
+    },
+    {
+      "name": "test_lab_report.HtmlTests.test_empty_html",
+      "status": "success",
+      "reason": ""
+    },
+    {
+      "name": "test_lab_report.HtmlTests.test_export_formats_and_errors",
+      "status": "success",
+      "reason": ""
+    },
+    {
+      "name": "test_lab_report.HtmlTests.test_hardlink_input_protected",
+      "status": "success",
+      "reason": ""
+    },
+    {
+      "name": "test_lab_report.HtmlTests.test_html_escapes_and_counts",
+      "status": "success",
+      "reason": ""
+    },
+    {
+      "name": "test_lab_report.MarkdownTests.test_empty_markdown",
+      "status": "success",
+      "reason": ""
+    },
+    {
+      "name": "test_lab_report.MarkdownTests.test_export_cli_and_failures",
+      "status": "success",
+      "reason": ""
+    },
+    {
+      "name": "test_lab_report.MarkdownTests.test_markdown_summary_and_escape",
+      "status": "success",
+      "reason": ""
+    },
+    {
+      "name": "test_lab_report.ReportTests.test_all_success",
+      "status": "success",
+      "reason": ""
+    },
+    {
+      "name": "test_lab_report.ReportTests.test_bad_records",
+      "status": "success",
+      "reason": ""
+    },
+    {
+      "name": "test_lab_report.ReportTests.test_bad_root",
+      "status": "success",
+      "reason": ""
+    },
+    {
+      "name": "test_lab_report.ReportTests.test_cli",
+      "status": "success",
+      "reason": ""
+    },
+    {
+      "name": "test_lab_report.ReportTests.test_duplicate",
+      "status": "success",
+      "reason": ""
+    },
+    {
+      "name": "test_lab_report.ReportTests.test_empty_is_not_pass",
+      "status": "success",
+      "reason": ""
+    },
+    {
+      "name": "test_lab_report.ReportTests.test_mixed",
+      "status": "success",
+      "reason": ""
+    },
+    {
+      "name": "test_publish_snapshot.PublishSnapshotTests.test_snapshot_validation_and_publication_guards",
+      "status": "success",
+      "reason": ""
+    },
+    {
+      "name": "test_report_center.CenterTests.test_context_validation",
+      "status": "success",
+      "reason": ""
+    },
+    {
+      "name": "test_report_center.CenterTests.test_escape_all_fields",
+      "status": "success",
+      "reason": ""
+    },
+    {
+      "name": "test_report_center.CenterTests.test_export",
+      "status": "success",
+      "reason": ""
+    },
+    {
+      "name": "test_report_center.CenterTests.test_host_and_scheme",
+      "status": "success",
+      "reason": ""
+    },
+    {
+      "name": "test_report_center.CenterTests.test_invalid",
+      "status": "success",
+      "reason": ""
+    },
+    {
+      "name": "test_report_center.CenterTests.test_offline_mobile",
+      "status": "success",
+      "reason": ""
+    },
+    {
+      "name": "test_report_center.CenterTests.test_states",
+      "status": "success",
+      "reason": ""
+    },
+    {
+      "name": "test_report_collector.CollectorTests.test_failure_skip_and_error_are_recorded",
+      "status": "success",
+      "reason": ""
+    },
+    {
+      "name": "test_report_collector.CollectorTests.test_subtest_failure_does_not_pass_parent",
+      "status": "success",
+      "reason": ""
+    },
+    {
+      "name": "test_run_history.HistoryTests.test_bounds_and_current_run_excluded",
+      "status": "success",
+      "reason": ""
+    },
+    {
+      "name": "test_run_history.HistoryTests.test_empty_history_does_not_claim_pass",
+      "status": "success",
+      "reason": ""
+    },
+    {
+      "name": "test_run_history.HistoryTests.test_escapes_remote_content",
+      "status": "success",
+      "reason": ""
+    },
+    {
+      "name": "test_run_history.HistoryTests.test_failure_steps_and_only_live_artifacts",
+      "status": "success",
+      "reason": ""
+    },
+    {
+      "name": "test_run_history.HistoryTests.test_invalid_run_id_rejected",
+      "status": "success",
+      "reason": ""
+    },
+    {
+      "name": "test_run_history.HistoryTests.test_partial_failure_stays_visible",
+      "status": "success",
+      "reason": ""
+    },
+    {
+      "name": "test_run_history.HistoryTests.test_statuses_never_treat_cancelled_or_unknown_as_success",
+      "status": "success",
+      "reason": ""
+    },
+    {
+      "name": "test_triage.TriageTests.test_action_required_not_hidden",
+      "status": "success",
+      "reason": ""
+    },
+    {
+      "name": "test_triage.TriageTests.test_branches_and_workflows_isolated",
+      "status": "success",
+      "reason": ""
+    },
+    {
+      "name": "test_triage.TriageTests.test_cancelled_run_does_not_erase_failure",
+      "status": "success",
+      "reason": ""
+    },
+    {
+      "name": "test_triage.TriageTests.test_empty_scope_not_all_clear",
+      "status": "success",
+      "reason": ""
+    },
+    {
+      "name": "test_triage.TriageTests.test_escape_untrusted_names_and_reject_bad_links",
+      "status": "success",
+      "reason": ""
+    },
+    {
+      "name": "test_triage.TriageTests.test_failed_job_url_uses_numeric_id_only",
+      "status": "success",
+      "reason": ""
+    },
+    {
+      "name": "test_triage.TriageTests.test_latest_failure_only_once",
+      "status": "success",
+      "reason": ""
+    },
+    {
+      "name": "test_triage.TriageTests.test_recovered_old_failure_not_pending",
+      "status": "success",
+      "reason": ""
+    },
+    {
+      "name": "test_triage.TriageTests.test_running_after_success_is_waiting",
+      "status": "success",
+      "reason": ""
+    },
+    {
+      "name": "test_triage.TriageTests.test_running_run_does_not_claim_fixed",
+      "status": "success",
+      "reason": ""
+    },
+    {
+      "name": "test_wider_history.WiderHistoryTests.test_comparison_can_find_prior_outside_visible_ten",
+      "status": "success",
+      "reason": ""
+    },
+    {
+      "name": "test_wider_history.WiderHistoryTests.test_old_recovered_failure_is_not_pending",
+      "status": "success",
+      "reason": ""
+    },
+    {
+      "name": "test_wider_history.WiderHistoryTests.test_old_unresolved_failure_survives_report_noise",
+      "status": "success",
+      "reason": ""
+    },
+    {
+      "name": "test_wider_history.WiderHistoryTests.test_scan_bounded_and_current_excluded",
+      "status": "success",
+      "reason": ""
+    },
+    {
+      "name": "test_wider_history.WiderHistoryTests.test_unresolved_failure_gets_priority_over_resolved_history",
+      "status": "success",
+      "reason": ""
+    }
+  ]
+}

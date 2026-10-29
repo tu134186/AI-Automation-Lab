@@ -1,0 +1,29 @@
+{
+  "scope": "覆盖本次已扫描的 16 次历史运行（最多 100 次）；不代表整个仓库全部故障。",
+  "evidence_note": "排查方向依据失败步骤名称，不是已确认根因；未自动重试或修改历史任务。",
+  "items": [
+    {
+      "name": "AI unattended repair",
+      "branch": "test/bugfix-proof-20261029",
+      "id": 40893017732,
+      "url": "https://github.com/tu134186/AI-Automation-Lab/actions/runs/40893017732",
+      "kind": "失败待处理",
+      "newer_unverified": false,
+      "latest_url": "https://github.com/tu134186/AI-Automation-Lab/actions/runs/40893017732",
+      "latest_state": "失败",
+      "direction": "模型授权检查未通过；核对原日志中的授权信息。",
+      "failed_steps": [
+        "generate → Check model authorization"
+      ],
+      "log_links": [
+        {
+          "name": "generate",
+          "url": "https://github.com/tu134186/AI-Automation-Lab/actions/runs/40893017732/job/123514563636"
+        }
+      ],
+      "notes": [
+        "本次只查询最近 5 个已完成任务的产物。"
+      ]
+    }
+  ]
+}
