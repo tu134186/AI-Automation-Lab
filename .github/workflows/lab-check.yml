@@ -11,6 +11,7 @@ concurrency:
   cancel-in-progress: true
 permissions:
   contents: read
+  actions: read
 jobs:
   report:
     runs-on: ubuntu-latest
@@ -21,6 +22,11 @@ jobs:
           persist-credentials: false
       - name: Run tests and export real reports
         run: python3 scripts/run_report.py
+      - name: Collect recent runs, failure steps and downloads
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 scripts/run_history.py
       - name: Publish Chinese report in task summary
         if: always()
         run: |
@@ -28,6 +34,12 @@ jobs:
             cat reports/report.md >> "$GITHUB_STEP_SUMMARY"
           else
             echo '报告生成中断，请查看本任务失败日志，不能判断为通过。' >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - name: Publish recent task history
+        if: always()
+        run: |
+          if [ -f reports/history.md ]; then
+            cat reports/history.md >> "$GITHUB_STEP_SUMMARY"
           fi
       - name: Package exact source
         if: always()
