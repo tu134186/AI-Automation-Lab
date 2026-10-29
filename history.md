@@ -1,6 +1,6 @@
 ## 待处理清单
 
-覆盖本次已扫描的 16 次历史运行（最多 100 次）；不代表整个仓库全部故障。
+覆盖本次已扫描的 17 次历史运行（最多 100 次）；不代表整个仓库全部故障。
 
 排查方向依据失败步骤名称，不是已确认根因；未自动重试或修改历史任务。
 
@@ -13,12 +13,22 @@
 
 ## 最近云端任务
 
-已扫描本仓库最近 16 次运行（最多 100 次）；列表仅展示最近 10 次；统计与待处理覆盖扫描范围；排除本次运行，不是实时监控。
+已扫描本仓库最近 17 次运行（最多 100 次）；列表仅展示最近 10 次；统计与待处理覆盖扫描范围；排除本次运行，不是实时监控。
 
-采集时间（UTC）：2026-10-29T15:34:09.843527+00:00
+采集时间（UTC）：2026-10-29T15:38:33.708001+00:00
 
-有效结果：16 · 通过：12 · 失败：4 · 成功率：75.0%
+有效结果：17 · 通过：13 · 失败：4 · 成功率：76.5%
 未计入成功率：0。取消、跳过、等待和未知结论不计入分母。
+
+### Automation Lab Check · 通过
+
+- 任务：[40902839617](https://github.com/tu134186/AI-Automation-Lab/actions/runs/40902839617)
+- 分支：feature/report-center-20261029
+- Commit：b8938edf68f978881d328e62a79e9efbb14746d9
+- 启动时间（UTC）：2026-10-29T15:33:53Z
+- 同工作流、同分支最近有效结果对比：持续通过
+- [对比的上次任务](https://github.com/tu134186/AI-Automation-Lab/actions/runs/40902032645)
+- <a href="https://github.com/tu134186/AI-Automation-Lab/actions/runs/40902839617/artifacts/12910431257">下载：report-center-b8938edf68f978881d328e62a79e9efbb14746d9</a>
 
 ### Automation Lab Check · 通过
 
@@ -68,7 +78,7 @@
 - 启动时间（UTC）：2026-10-29T15:16:24Z
 - 同工作流、同分支最近有效结果对比：持续通过
 - [对比的上次任务](https://github.com/tu134186/AI-Automation-Lab/actions/runs/40899207612)
-- <a href="https://github.com/tu134186/AI-Automation-Lab/actions/runs/40899869659/artifacts/12909201065">下载：report-center-36398cefd2e239712b91334020b6c713f1515398</a>
+- 本次只查询最近 5 个已完成任务的产物。
 
 ### Automation Lab Check · 通过
 
@@ -107,16 +117,5 @@
 - 启动时间（UTC）：2026-10-29T14:29:33Z
 - 同工作流、同分支最近有效结果对比：恢复通过
 - [对比的上次任务](https://github.com/tu134186/AI-Automation-Lab/actions/runs/40891890405)
-- 本次只查询最近 5 个已完成任务的产物。
-
-### Bugfix proof · 失败
-
-- 任务：[40891890405](https://github.com/tu134186/AI-Automation-Lab/actions/runs/40891890405)
-- 分支：test/bugfix-proof-20261029
-- Commit：be050bf283258341ae756fcd524fc9d0ad009cd4
-- 启动时间（UTC）：2026-10-29T14:28:56Z
-- 同工作流、同分支最近有效结果对比：新增失败
-- [对比的上次任务](https://github.com/tu134186/AI-Automation-Lab/actions/runs/40891462462)
-- 失败步骤：regression → Run regression tests
 - 本次只查询最近 5 个已完成任务的产物。
 

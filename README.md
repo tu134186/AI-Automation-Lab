@@ -1,13 +1,38 @@
-# 最新已核验报告
+# 报告中心 · 手机总览
 
-[直接查看中文报告](report.md) · [待处理清单](diagnosis.md) · [历史任务](history.md)
+## 已保存的核验快照
 
-源码 Commit：b8938edf68f978881d328e62a79e9efbb14746d9
+| 项目 | 结果 |
+| --- | --- |
+| 本次自动检查 | 全部通过，共 63 项 |
+| 历史待处理 | 1 项，独立于本次检查结果 |
+| 历史扫描 | 17 次 |
+| 快照更新时间 | 2026/10/29 23:38:47（北京时间） |
 
-[本次云端任务](https://github.com/tu134186/AI-Automation-Lab/actions/runs/40902839617)
+源码 Commit：ec143c000b79ca7477d3f01077987c2a5f85c558
 
-[下载对应源码 ZIP](AI-Automation-Lab-b8938ed-source.zip)
+[本快照对应任务](https://github.com/tu134186/AI-Automation-Lab/actions/runs/40903598703) · [核验说明](delivery.md)
 
-本分支由云端保存最新已核验快照；不依赖 Actions 产物保留天数，直到分支或文件被删除。
-数据是采集时快照，不是实时状态。最新报告任务若失败，本分支保留上次成功快照，请以 Commit 和任务链接核对时间。
-交付校验文件覆盖下载包中的原始 10 个文件，不包含本分支额外生成的 README.md 和 snapshot.json。
+## 当前任务状态
+
+[![GitHub 当前工作流状态](https://github.com/tu134186/AI-Automation-Lab/actions/workflows/lab-check.yml/badge.svg?branch=feature%2Freport-center-20261029)](https://github.com/tu134186/AI-Automation-Lab/actions?query=branch%3Afeature%2Freport-center-20261029)
+
+[查看当前任务列表](https://github.com/tu134186/AI-Automation-Lab/actions?query=branch%3Afeature%2Freport-center-20261029)。上方快照只在核验成功后更新；新任务运行中或失败时，这里可能仍是上次成功结果。徽章由 GitHub 加载，可能有缓存，以任务页为准。
+
+## 需要关注
+
+- **失败待处理：AI unattended repair**（test/bugfix-proof-20261029）
+  模型授权检查未通过；核对原日志中的授权信息。
+  [查看证据任务](https://github.com/tu134186/AI-Automation-Lab/actions/runs/40893017732)
+
+## 查看与下载
+
+- [完整中文报告](report.md)
+- [待处理清单](diagnosis.md)
+- [历史任务与产物入口](history.md)
+- [下载对应源码 ZIP](AI-Automation-Lab-ec143c0-source.zip)
+- [文件校验清单](SHA256SUMS.txt)
+
+本分支保存快照，不受 Actions 产物保留期限制；删除仓库、分支或文件后仍会丢失。主分支未因报告发布而修改。
+
+原交付校验文件不覆盖本分支额外生成的 README.md 与 snapshot.json。
