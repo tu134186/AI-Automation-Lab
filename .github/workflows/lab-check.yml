@@ -92,6 +92,8 @@ jobs:
 
   publish_snapshot:
     needs: report
+    outputs:
+      snapshot_sha: ${{ steps.save_snapshot.outputs.snapshot_sha }}
     if: github.ref == 'refs/heads/feature/report-center-20261029'
     runs-on: ubuntu-latest
     timeout-minutes: 3
@@ -112,8 +114,42 @@ jobs:
           name: complete-delivery-${{ github.sha }}
           path: downloaded-bundle
       - name: Verify hashes and save snapshot to isolated report branch
+        id: save_snapshot
         uses: actions/github-script@v7
         with:
           script: |
             const {publish} = require('./scripts/publish_report.cjs');
             await publish({github,context,core});
+
+  verify_download:
+    needs: [report, publish_snapshot]
+    if: github.ref == 'refs/heads/feature/report-center-20261029'
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Download pinned remote package and verify offline contents
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SNAPSHOT_SHA: ${{ needs.publish_snapshot.outputs.snapshot_sha }}
+        run: python3 scripts/verify_published.py --source "$GITHUB_SHA" --snapshot "$SNAPSHOT_SHA" --run-id "$GITHUB_RUN_ID"
+      - name: Publish download verification result
+        if: always()
+        run: |
+          if [ -f verification/download-verification.md ]; then
+            cat verification/download-verification.md >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo '下载回读验收中断，没有可用的验收结果，请查看步骤日志。' >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: download-verification-${{ github.sha }}
+          path: verification/
+          retention-days: 30
+          if-no-files-found: error

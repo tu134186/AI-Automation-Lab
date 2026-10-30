@@ -100,3 +100,11 @@ report_center.export 和历史／诊断导出现在复用与旧 CLI 相同的先
 每条历史记录校验完整 Commit、有效任务编号和时间，去重并限量。新发布的任务摘要额外提供本次包的锁定 Commit 链接。
 delivery_history.json 属于报告分支附加索引，不在原始完整 ZIP 的 12 文件清单中。
 归档 Commit 由报告分支提交历史保留；删除仓库、改写或清理历史仍可能导致旧链接丢失，不是外部备份。
+
+## 发布后真实下载回读
+publish_snapshot 输出本次报告归档 Commit，verify_download 在另一台只读 runner 上按该完整 Commit 从 GitHub Contents／Git Blob API 读取完整 ZIP 和外部校验值。
+不读取 latest 可变引用，不执行下载包中的代码。网络只指向本测试仓库，响应／文件大小有界，禁止重定向转发令牌；失败摘要不输出凭据或响应正文。
+检查远端 Git Blob SHA-1、ZIP SHA-256、源码 Commit、Run ID，再在临时目录复核 ZIP 内 12 项交付数据和源码。
+生成独立 download-verification.json／.md 以及 Actions 产物，标明实际回读字节数、归档标识与校验结果。
+回读是发布后的验收；若回读网络或校验失败，整个工作流失败，但不会自动回滚已发布快照。固定总览需结合当前任务状态读取，不能用上次本地核验代替回读结果。
+这验证的是云端从 GitHub 实际取得的内容，不保证用户手机网络能够打开同一地址。

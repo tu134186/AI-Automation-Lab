@@ -109,8 +109,10 @@ async function main() {
       throw Object.assign(new Error('not found'),{status:404});
     }}}};
     const summary={addHeading(){return this;},addLink(){return this;},addRaw(){return this;},async write(){}};
-    const core={info(){},summary};
+    const outputs={};
+    const core={info(){},summary,setOutput(name,value){outputs[name]=value;}};
     await publish({github,context,core});
+    assert.equal(outputs.snapshot_sha,'snapshot');
     assert.equal(writes.find(x=>x[0]==='ref')[1].ref,'refs/heads/reports-latest');
     assert.equal(writes.find(x=>x[0]==='tree')[1].tree.length,17);
     writes=[];existing=true;

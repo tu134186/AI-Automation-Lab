@@ -225,6 +225,7 @@ async function publish({github, context, core}) {
     await github.rest.git.createRef({owner,repo,ref:'refs/heads/' + target,sha:commit.data.sha});
   }
   const url = 'https://github.com/' + owner + '/' + repo + '/blob/' + target + '/README.md';
+  core.setOutput('snapshot_sha',commit.data.sha);
   core.info('Published verified snapshot: ' + commit.data.sha);
   await core.summary.addHeading('固定报告入口已更新').addLink('查看最新中文报告',url)
     .addRaw('\n').addLink('本次交付包（锁定归档 Commit）',
