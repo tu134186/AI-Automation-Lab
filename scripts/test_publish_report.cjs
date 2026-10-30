@@ -3,7 +3,7 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const crypto = require('node:crypto');
-const {validateSnapshot,validateBundle,publish,renderOverview} = require('./publish_report.cjs');
+const {validateSnapshot,validateBundle,publish,renderOverview,archiveEntry,archiveList} = require('./publish_report.cjs');
 const sha = 'a'.repeat(40);
 const base = fs.mkdtempSync(path.join(os.tmpdir(),'report-publish-'));
 const original = process.cwd();
@@ -44,12 +44,22 @@ async function main() {
     assert.throws(()=>validateBundle(path.join(base,'downloaded-bundle'),sha),/hash mismatch/);
     folder=fixture();
     const snapshot={source_commit:sha,run_id:123,updated_at:'2026-10-29T15:00:00Z'};
+    const old=archiveEntry({...snapshot,run_id:122},'b'.repeat(40));
+    assert.ok(old.download_url.includes('/raw/'+'b'.repeat(40)+'/complete-delivery.zip'));
+    assert.throws(()=>archiveEntry(snapshot,'reports-latest'),/Invalid delivery archive/);
+    assert.equal(archiveList(old,[old]).length,1);
+    const older=Array.from({length:8},(_,i)=>archiveEntry(snapshot,String(i).repeat(40)));
+    assert.equal(archiveList(old,older).length,5);
     const overview=renderOverview({context:{commit:sha},all_passed:true,total:63},
       {scanned_count:16},{items:[]},snapshot);
     assert.match(overview,/本次自动检查/);
     assert.match(overview,/2026\/10\/29 23:00:00/);
     assert.match(overview,/当前任务状态/);
     assert.match(overview,/可能仍是上次成功结果/);
+    const indexed=renderOverview({context:{commit:sha},all_passed:true,total:63},
+      {scanned_count:16},{items:[]},snapshot,[old]);
+    assert.ok(indexed.includes(old.download_url));
+    assert.match(indexed,/历史交付包/);
     const dangerous=renderOverview({context:{commit:sha},all_passed:true,total:63},
       {scanned_count:16},{items:[{id:7,name:'<script>bad</script>',branch:'x|y',kind:'失败待处理',direction:'<img>'}]},snapshot);
     assert.ok(!dangerous.includes('<script>'));
@@ -82,7 +92,7 @@ async function main() {
       getRef:async args=>{
         if(args.ref==='heads/feature/report-center-20261029')
           return {data:{object:{sha:stale?'b'.repeat(40):sha}}};
-        if(existing) return {data:{object:{sha:'previous'}}};
+        if(existing) return {data:{object:{sha:'b'.repeat(40)}}};
         throw Object.assign(new Error('not found'),{status:404});
       },
       createBlob:async args=>{writes.push(['blob',args]);return {data:{sha:'blob'}};},
@@ -90,17 +100,27 @@ async function main() {
       createCommit:async args=>{writes.push(['commit',args]);return {data:{sha:'snapshot'}};},
       createRef:async args=>{writes.push(['ref',args]);return {};},
       updateRef:async args=>{writes.push(['update',args]);return {};}
-    }}};
+    },repos:{getContent:async args=>{
+      if(args.path==='snapshot.json') {
+        const data=Buffer.from(JSON.stringify({...snapshot,run_id:122}));
+        return {data:{type:'file',encoding:'base64',size:data.length,content:data.toString('base64')}};
+      }
+      if(args.path==='complete-delivery.zip') return {data:{type:'file',size:100}};
+      throw Object.assign(new Error('not found'),{status:404});
+    }}}};
     const summary={addHeading(){return this;},addLink(){return this;},addRaw(){return this;},async write(){}};
     const core={info(){},summary};
     await publish({github,context,core});
     assert.equal(writes.find(x=>x[0]==='ref')[1].ref,'refs/heads/reports-latest');
-    assert.equal(writes.find(x=>x[0]==='tree')[1].tree.length,16);
+    assert.equal(writes.find(x=>x[0]==='tree')[1].tree.length,17);
     writes=[];existing=true;
     await publish({github,context,core});
     assert.equal(writes.find(x=>x[0]==='update')[1].ref,'heads/reports-latest');
     assert.equal(writes.find(x=>x[0]==='update')[1].force,false);
-    assert.deepEqual(writes.find(x=>x[0]==='commit')[1].parents,['previous']);
+    assert.deepEqual(writes.find(x=>x[0]==='commit')[1].parents,['b'.repeat(40)]);
+    const historyBlob=writes.filter(x=>x[0]==='blob').map(x=>Buffer.from(x[1].content,'base64').toString('utf8'))
+      .find(x=>x.includes('"current_source_commit"'));
+    assert.equal(JSON.parse(historyBlob).previous[0].snapshot_commit,'b'.repeat(40));
     writes=[];stale=true;
     await assert.rejects(()=>publish({github,context,core}),/Source branch changed/);
     assert.equal(writes.length,0);

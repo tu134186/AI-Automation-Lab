@@ -55,12 +55,66 @@ function validateBundle(folder, sha) {
           'complete-delivery.zip.sha256':Buffer.from(digest+'  complete-delivery.zip\n')};
 }
 
+function archiveEntry(snapshot, commit) {
+  if (!/^[0-9a-f]{40}$/.test(commit) || !/^[0-9a-f]{40}$/.test(snapshot.source_commit)
+      || !Number.isSafeInteger(snapshot.run_id) || snapshot.run_id < 1
+      || !Number.isFinite(new Date(snapshot.updated_at).getTime()))
+    throw new Error('Invalid delivery archive evidence');
+  return {snapshot_commit:commit,source_commit:snapshot.source_commit,run_id:snapshot.run_id,
+    updated_at:snapshot.updated_at,
+    download_url:'https://github.com/tu134186/AI-Automation-Lab/raw/' + commit + '/complete-delivery.zip'};
+}
+
+function archiveList(previous, older) {
+  const result = [];
+  const seen = new Set();
+  for (const item of [previous,...older].filter(Boolean)) {
+    const entry = archiveEntry(item,item.snapshot_commit);
+    if (!seen.has(entry.snapshot_commit)) {
+      seen.add(entry.snapshot_commit);
+      result.push(entry);
+    }
+    if (result.length === 5) break;
+  }
+  return result;
+}
+
+async function previousDeliveries(github,owner,repo,parent) {
+  if (!parent) return [];
+  async function readJson(filename, optional=false) {
+    try {
+      const response = await github.rest.repos.getContent({owner,repo,path:filename,ref:parent});
+      const file = response.data;
+      if (file.type !== 'file' || file.encoding !== 'base64' || file.size > 100000)
+        throw new Error('Invalid previous delivery metadata');
+      return JSON.parse(Buffer.from(file.content,'base64').toString('utf8'));
+    } catch (error) {
+      if (optional && error.status === 404) return null;
+      throw error;
+    }
+  }
+  const [snapshot,history] = await Promise.all([
+    readJson('snapshot.json'),readJson('delivery_history.json',true)]);
+  if (history && (history.schema !== 1 || !Array.isArray(history.previous) || history.previous.length > 5))
+    throw new Error('Invalid prior delivery index');
+  let previous = null;
+  try {
+    const bundle = await github.rest.repos.getContent({owner,repo,path:'complete-delivery.zip',ref:parent});
+    if (bundle.data.type !== 'file' || bundle.data.size <= 0 || bundle.data.size > 10*1024*1024)
+      throw new Error('Invalid previous complete ZIP');
+    previous = archiveEntry(snapshot,parent);
+  } catch (error) {
+    if (error.status !== 404) throw error;
+  }
+  return archiveList(previous,history ? history.previous : []);
+}
+
 function md(value) {
   return String(value).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
     .replace(/[\\\`*_\[\]|]/g, c => '&#' + c.charCodeAt(0) + ';').replace(/[\r\n]+/g,' ');
 }
 
-function renderOverview(report, history, diagnosis, snapshot) {
+function renderOverview(report, history, diagnosis, snapshot, deliveries=[]) {
   if (report.context?.commit !== snapshot.source_commit || report.all_passed !== true
       || !Number.isSafeInteger(report.total) || report.total < 1
       || !Number.isSafeInteger(history.scanned_count) || history.scanned_count < 0
@@ -108,6 +162,15 @@ function renderOverview(report, history, diagnosis, snapshot) {
     if (Number.isSafeInteger(item.id) && item.id > 0)
       lines.push('  [原任务证据](' + repo + '/actions/runs/' + item.id + ')');
   }
+  lines.push('','## 历史交付包','',
+    '下面的链接锁定报告归档 Commit，后续更新最新入口不会改变这些链接对应的旧包。','');
+  if (!deliveries.length) lines.push('尚无已记录的历史完整包。');
+  for (const candidate of deliveries) {
+    const item = archiveEntry(candidate,candidate.snapshot_commit);
+    const time = new Intl.DateTimeFormat('zh-CN',{timeZone:'Asia/Shanghai',year:'numeric',month:'2-digit',
+      day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false}).format(new Date(item.updated_at));
+    lines.push('- [源码 ' + item.source_commit.slice(0,7) + ' · ' + time + '（北京时间）](' + item.download_url + ')');
+  }
   lines.push('','## 查看与下载','',
     '- [下载完整交付包：报告、诊断、日志、校验清单和源码](complete-delivery.zip)',
     '- [完整包 SHA-256](complete-delivery.zip.sha256)',
@@ -141,11 +204,14 @@ async function publish({github, context, core}) {
   const snapshot = {schema:1,source_commit:context.sha,run_id:context.runId,
     run_url:'https://github.com/' + owner + '/' + repo + '/actions/runs/' + context.runId,
     updated_at:new Date().toISOString()};
+  const deliveryHistory = {schema:1,current_source_commit:context.sha,current_run_id:context.runId,
+    previous:await previousDeliveries(github,owner,repo,parent)};
+  files['delivery_history.json'] = Buffer.from(JSON.stringify(deliveryHistory,null,2)+'\n');
   files['snapshot.json'] = Buffer.from(JSON.stringify(snapshot,null,2) + '\n');
   files['README.md'] = Buffer.from(renderOverview(
     JSON.parse(files['report.json'].toString('utf8')),
     JSON.parse(files['history.json'].toString('utf8')),
-    JSON.parse(files['diagnosis.json'].toString('utf8')), snapshot));
+    JSON.parse(files['diagnosis.json'].toString('utf8')), snapshot, deliveryHistory.previous));
   const entries = await Promise.all(Object.entries(files).map(async ([filename,data]) => {
     const blob = await github.rest.git.createBlob({owner,repo,encoding:'base64',content:data.toString('base64')});
     return {path:filename,mode:'100644',type:'blob',sha:blob.data.sha};
@@ -161,7 +227,9 @@ async function publish({github, context, core}) {
   const url = 'https://github.com/' + owner + '/' + repo + '/blob/' + target + '/README.md';
   core.info('Published verified snapshot: ' + commit.data.sha);
   await core.summary.addHeading('固定报告入口已更新').addLink('查看最新中文报告',url)
+    .addRaw('\n').addLink('本次交付包（锁定归档 Commit）',
+      'https://github.com/' + owner + '/' + repo + '/raw/' + commit.data.sha + '/complete-delivery.zip')
     .addRaw('\n源码 Commit：' + context.sha + '\n').write();
 }
-module.exports = {validateSnapshot,validateBundle,publish,renderOverview};
+module.exports = {validateSnapshot,validateBundle,publish,renderOverview,archiveEntry,archiveList};
 
