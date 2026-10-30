@@ -75,6 +75,12 @@ test_latest_failure_only_once (test_triage.TriageTests.test_latest_failure_only_
 test_recovered_old_failure_not_pending (test_triage.TriageTests.test_recovered_old_failure_not_pending) ... ok
 test_running_after_success_is_waiting (test_triage.TriageTests.test_running_after_success_is_waiting) ... ok
 test_running_run_does_not_claim_fixed (test_triage.TriageTests.test_running_run_does_not_claim_fixed) ... ok
+test_collection_error_uses_separate_note (test_unified_export.UnifiedExportTests.test_collection_error_uses_separate_note) ... ok
+test_history_failure_preserves_all_old_files (test_unified_export.UnifiedExportTests.test_history_failure_preserves_all_old_files) ... ok
+test_history_refresh_replaces_one_block (test_unified_export.UnifiedExportTests.test_history_refresh_replaces_one_block) ... ok
+test_invalid_html_block_preserves_history (test_unified_export.UnifiedExportTests.test_invalid_html_block_preserves_history) ... ok
+test_report_center_failure_preserves_old_json_and_markdown (test_unified_export.UnifiedExportTests.test_report_center_failure_preserves_old_json_and_markdown) ... ok
+test_report_center_rejects_output_aliases (test_unified_export.UnifiedExportTests.test_report_center_rejects_output_aliases) ... ok
 test_comparison_can_find_prior_outside_visible_ten (test_wider_history.WiderHistoryTests.test_comparison_can_find_prior_outside_visible_ten) ... ok
 test_old_recovered_failure_is_not_pending (test_wider_history.WiderHistoryTests.test_old_recovered_failure_is_not_pending) ... ok
 test_old_unresolved_failure_survives_report_noise (test_wider_history.WiderHistoryTests.test_old_unresolved_failure_survives_report_noise) ... ok
@@ -82,6 +88,6 @@ test_scan_bounded_and_current_excluded (test_wider_history.WiderHistoryTests.tes
 test_unresolved_failure_gets_priority_over_resolved_history (test_wider_history.WiderHistoryTests.test_unresolved_failure_gets_priority_over_resolved_history) ... ok
 
 ----------------------------------------------------------------------
-Ran 82 tests in 1.195s
+Ran 88 tests in 1.095s
 
 OK

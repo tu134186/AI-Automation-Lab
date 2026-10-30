@@ -2,14 +2,14 @@
 
 **全部通过**
 
-通过：83 · 失败：0 · 进行中：0 · 跳过：0
+通过：89 · 失败：0 · 进行中：0 · 跳过：0
 
 - 仓库：tu134186/AI-Automation-Lab
 - 分支：feature/report-center-20261029
-- Commit：7d23562bc7141ea8fda4c65663ee4acb3d2522ea
+- Commit：353caf3817ad48b74a7288ce11208fcd245656cb
 
-<a href="https://github.com/tu134186/AI-Automation-Lab/actions/runs/40909142221">任务记录与报告下载</a>
-<a href="https://github.com/tu134186/AI-Automation-Lab/commit/7d23562bc7141ea8fda4c65663ee4acb3d2522ea">本次修改</a>
+<a href="https://github.com/tu134186/AI-Automation-Lab/actions/runs/40984006959">任务记录与报告下载</a>
+<a href="https://github.com/tu134186/AI-Automation-Lab/commit/353caf3817ad48b74a7288ce11208fcd245656cb">本次修改</a>
 
 | 测试 | 状态 | 原因／详情 |
 | --- | --- | --- |
@@ -91,6 +91,12 @@
 | test&#95;triage.TriageTests.test&#95;recovered&#95;old&#95;failure&#95;not&#95;pending | 通过 |  |
 | test&#95;triage.TriageTests.test&#95;running&#95;after&#95;success&#95;is&#95;waiting | 通过 |  |
 | test&#95;triage.TriageTests.test&#95;running&#95;run&#95;does&#95;not&#95;claim&#95;fixed | 通过 |  |
+| test&#95;unified&#95;export.UnifiedExportTests.test&#95;collection&#95;error&#95;uses&#95;separate&#95;note | 通过 |  |
+| test&#95;unified&#95;export.UnifiedExportTests.test&#95;history&#95;failure&#95;preserves&#95;all&#95;old&#95;files | 通过 |  |
+| test&#95;unified&#95;export.UnifiedExportTests.test&#95;history&#95;refresh&#95;replaces&#95;one&#95;block | 通过 |  |
+| test&#95;unified&#95;export.UnifiedExportTests.test&#95;invalid&#95;html&#95;block&#95;preserves&#95;history | 通过 |  |
+| test&#95;unified&#95;export.UnifiedExportTests.test&#95;report&#95;center&#95;failure&#95;preserves&#95;old&#95;json&#95;and&#95;markdown | 通过 |  |
+| test&#95;unified&#95;export.UnifiedExportTests.test&#95;report&#95;center&#95;rejects&#95;output&#95;aliases | 通过 |  |
 | test&#95;wider&#95;history.WiderHistoryTests.test&#95;comparison&#95;can&#95;find&#95;prior&#95;outside&#95;visible&#95;ten | 通过 |  |
 | test&#95;wider&#95;history.WiderHistoryTests.test&#95;old&#95;recovered&#95;failure&#95;is&#95;not&#95;pending | 通过 |  |
 | test&#95;wider&#95;history.WiderHistoryTests.test&#95;old&#95;unresolved&#95;failure&#95;survives&#95;report&#95;noise | 通过 |  |
@@ -99,6 +105,6 @@
 
 ## 修改记录
 
-fix: protect existing reports when multi-format export fails<br><br> .github/workflows/buildmate.yml    &#124;  95 ++++++++++++++++<br> .github/workflows/lab-check.yml    &#124; 117 ++++++++++++++++++++<br> AGENTS.md                          &#124;  21 ++++<br> README.md                          &#124;  77 +++++++++++++<br> build-config.json                  &#124;   1 +<br> docs/development-test.md           &#124;  12 +++<br> docs/report-center.md              &#124;  87 +++++++++++++++<br> docs/verification-2026-10-29.md    &#124;  26 +++++<br> examples/report.html               &#124;  23 ++++<br> examples/report.md                 &#124;  12 +++<br> examples/tasks.json                &#124;   4 +<br> lab&#95;report.py                      &#124; 163 ++++++++++++++++++++++++++++<br> report&#95;center.py                   &#124; 142 ++++++++++++++++++++++++<br> report&#95;policy.json                 &#124;  11 ++<br> scripts/build&#95;bundle.py            &#124;  88 +++++++++++++++<br> scripts/publish&#95;report.cjs         &#124; 167 +++++++++++++++++++++++++++++<br> scripts/report&#95;policy.py           &#124;  30 ++++++<br> scripts/run&#95;history.py             &#124; 214 +++++++++++++++++++++++++++++++++++++<br> scripts/run&#95;report.py              &#124;  78 ++++++++++++++<br> scripts/self&#95;check.py              &#124;  14 +++<br> scripts/test&#95;publish&#95;report.cjs    &#124; 116 ++++++++++++++++++++<br> scripts/triage.py                  &#124; 106 ++++++++++++++++++<br> scripts/validate&#95;delivery.py       &#124; 138 ++++++++++++++++++++++++<br> tests/test&#95;bundle.py               &#124;  42 ++++++++<br> tests/test&#95;delivery.py             &#124;  93 ++++++++++++++++<br> tests/test&#95;history&#95;comparison.py   &#124;  38 +++++++<br> tests/test&#95;lab&#95;report.py           &#124; 134 +++++++++++++++++++++++<br> tests/test&#95;publish&#95;snapshot.py     &#124;  12 +++<br> tests/test&#95;report&#95;center.py        &#124;  50 +++++++++<br> tests/test&#95;report&#95;collector.py     &#124;  55 ++++++++++<br> tests/test&#95;report&#95;policy.py        &#124;  53 +++++++++<br> tests/test&#95;run&#95;history.py          &#124;  64 +++++++++++<br> tests/test&#95;transactional&#95;export.py &#124;  69 ++++++++++++<br> tests/test&#95;triage.py               &#124;  54 ++++++++++<br> tests/test&#95;wider&#95;history.py        &#124;  48 +++++++++<br> 35 files changed, 2454 insertions(+)
+fix: protect all report exports and make history refresh idempotent<br><br> .github/workflows/buildmate.yml    &#124;  95 +++++++++++++++<br> .github/workflows/lab-check.yml    &#124; 119 +++++++++++++++++++<br> AGENTS.md                          &#124;  21 ++++<br> README.md                          &#124;  77 ++++++++++++<br> build-config.json                  &#124;   1 +<br> docs/development-test.md           &#124;  12 ++<br> docs/report-center.md              &#124;  94 +++++++++++++++<br> docs/verification-2026-10-29.md    &#124;  26 ++++<br> examples/report.html               &#124;  23 ++++<br> examples/report.md                 &#124;  12 ++<br> examples/tasks.json                &#124;   4 +<br> lab&#95;report.py                      &#124; 168 ++++++++++++++++++++++++++<br> report&#95;center.py                   &#124; 144 ++++++++++++++++++++++<br> report&#95;policy.json                 &#124;  11 ++<br> scripts/build&#95;bundle.py            &#124;  88 ++++++++++++++<br> scripts/publish&#95;report.cjs         &#124; 167 ++++++++++++++++++++++++++<br> scripts/report&#95;policy.py           &#124;  30 +++++<br> scripts/run&#95;history.py             &#124; 236 +++++++++++++++++++++++++++++++++++++<br> scripts/run&#95;report.py              &#124;  78 ++++++++++++<br> scripts/self&#95;check.py              &#124;  14 +++<br> scripts/test&#95;publish&#95;report.cjs    &#124; 116 ++++++++++++++++++<br> scripts/triage.py                  &#124; 106 +++++++++++++++++<br> scripts/validate&#95;delivery.py       &#124; 138 ++++++++++++++++++++++<br> tests/test&#95;bundle.py               &#124;  42 +++++++<br> tests/test&#95;delivery.py             &#124;  93 +++++++++++++++<br> tests/test&#95;history&#95;comparison.py   &#124;  38 ++++++<br> tests/test&#95;lab&#95;report.py           &#124; 134 +++++++++++++++++++++<br> tests/test&#95;publish&#95;snapshot.py     &#124;  12 ++<br> tests/test&#95;report&#95;center.py        &#124;  50 ++++++++<br> tests/test&#95;report&#95;collector.py     &#124;  55 +++++++++<br> tests/test&#95;report&#95;policy.py        &#124;  53 +++++++++<br> tests/test&#95;run&#95;history.py          &#124;  64 ++++++++++<br> tests/test&#95;transactional&#95;export.py &#124;  69 +++++++++++<br> tests/test&#95;triage.py               &#124;  54 +++++++++<br> tests/test&#95;unified&#95;export.py       &#124;  75 ++++++++++++<br> tests/test&#95;wider&#95;history.py        &#124;  48 ++++++++<br> 36 files changed, 2567 insertions(+)
 
 报告来自本次实际测试。跳过不计为通过；下载文件位于任务页底部 Artifacts。
