@@ -1,8 +1,9 @@
 # 报告中心 · 手机总览
 
 <!-- DOWNLOAD_RECEIPT_START -->
-**发布后下载回读：待验收**
-本快照已完成生成与发布校验，独立回读结果尚未登记。
+**发布后下载回读：已通过**
+
+[查看独立下载验收凭据](download-verification.md)
 <!-- DOWNLOAD_RECEIPT_END -->
 
 ## 已保存的核验快照

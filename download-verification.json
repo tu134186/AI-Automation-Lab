@@ -1,0 +1,10 @@
+{
+  "verified": true,
+  "source_commit": "faab69ce5869dae21b38f04d773ae98e29c9cf56",
+  "snapshot_commit": "10743e7e04aaaf59993bab74d1ea0d5b9097ef11",
+  "run_id": "40986405476",
+  "bytes": 86956,
+  "sha256": "c76bf6b589b4f98b7127b30a10d68c04a43c386296314c7a1a7e8887456a3a3b",
+  "files": 12,
+  "recorded_at": "2026-10-30T01:32:34.227Z"
+}
