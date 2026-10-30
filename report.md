@@ -2,14 +2,14 @@
 
 **全部通过**
 
-通过：89 · 失败：0 · 进行中：0 · 跳过：0
+通过：95 · 失败：0 · 进行中：0 · 跳过：0
 
 - 仓库：tu134186/AI-Automation-Lab
 - 分支：feature/report-center-20261029
-- Commit：78f6e9cb8d89e6a7e2eea892bc49c511714fa838
+- Commit：7d64668a2197028edb11961e24d8523ad6cf6b8d
 
-<a href="https://github.com/tu134186/AI-Automation-Lab/actions/runs/40984599777">任务记录与报告下载</a>
-<a href="https://github.com/tu134186/AI-Automation-Lab/commit/78f6e9cb8d89e6a7e2eea892bc49c511714fa838">本次修改</a>
+<a href="https://github.com/tu134186/AI-Automation-Lab/actions/runs/40985436554">任务记录与报告下载</a>
+<a href="https://github.com/tu134186/AI-Automation-Lab/commit/7d64668a2197028edb11961e24d8523ad6cf6b8d">本次修改</a>
 
 | 测试 | 状态 | 原因／详情 |
 | --- | --- | --- |
@@ -51,6 +51,12 @@
 | test&#95;lab&#95;report.ReportTests.test&#95;empty&#95;is&#95;not&#95;pass | 通过 |  |
 | test&#95;lab&#95;report.ReportTests.test&#95;mixed | 通过 |  |
 | test&#95;publish&#95;snapshot.PublishSnapshotTests.test&#95;snapshot&#95;validation&#95;and&#95;publication&#95;guards | 通过 |  |
+| test&#95;published&#95;download.PublishedDownloadTests.test&#95;contents&#95;api&#95;verifies&#95;git&#95;blob&#95;hash | 通过 |  |
+| test&#95;published&#95;download.PublishedDownloadTests.test&#95;corrupt&#95;remote&#95;bytes&#95;rejected | 通过 |  |
+| test&#95;published&#95;download.PublishedDownloadTests.test&#95;large&#95;file&#95;metadata&#95;uses&#95;git&#95;blob&#95;fallback | 通过 |  |
+| test&#95;published&#95;download.PublishedDownloadTests.test&#95;mutable&#95;ref&#95;and&#95;unapproved&#95;filename&#95;rejected | 通过 |  |
+| test&#95;published&#95;download.PublishedDownloadTests.test&#95;real&#95;bundle&#95;round&#95;trip | 通过 |  |
+| test&#95;published&#95;download.PublishedDownloadTests.test&#95;wrong&#95;source&#95;or&#95;run&#95;rejected | 通过 |  |
 | test&#95;report&#95;center.CenterTests.test&#95;context&#95;validation | 通过 |  |
 | test&#95;report&#95;center.CenterTests.test&#95;escape&#95;all&#95;fields | 通过 |  |
 | test&#95;report&#95;center.CenterTests.test&#95;export | 通过 |  |
@@ -105,6 +111,6 @@
 
 ## 修改记录
 
-feat: index previous verified deliveries with immutable snapshot download links<br><br> .github/workflows/buildmate.yml    &#124;  95 +++++++++++++++<br> .github/workflows/lab-check.yml    &#124; 119 +++++++++++++++++++<br> AGENTS.md                          &#124;  21 ++++<br> README.md                          &#124;  77 ++++++++++++<br> build-config.json                  &#124;   1 +<br> docs/development-test.md           &#124;  12 ++<br> docs/report-center.md              &#124; 102 ++++++++++++++++<br> docs/verification-2026-10-29.md    &#124;  26 ++++<br> examples/report.html               &#124;  23 ++++<br> examples/report.md                 &#124;  12 ++<br> examples/tasks.json                &#124;   4 +<br> lab&#95;report.py                      &#124; 168 ++++++++++++++++++++++++++<br> report&#95;center.py                   &#124; 144 ++++++++++++++++++++++<br> report&#95;policy.json                 &#124;  11 ++<br> scripts/build&#95;bundle.py            &#124;  88 ++++++++++++++<br> scripts/publish&#95;report.cjs         &#124; 235 ++++++++++++++++++++++++++++++++++++<br> scripts/report&#95;policy.py           &#124;  30 +++++<br> scripts/run&#95;history.py             &#124; 236 +++++++++++++++++++++++++++++++++++++<br> scripts/run&#95;report.py              &#124;  78 ++++++++++++<br> scripts/self&#95;check.py              &#124;  14 +++<br> scripts/test&#95;publish&#95;report.cjs    &#124; 136 +++++++++++++++++++++<br> scripts/triage.py                  &#124; 106 +++++++++++++++++<br> scripts/validate&#95;delivery.py       &#124; 138 ++++++++++++++++++++++<br> tests/test&#95;bundle.py               &#124;  42 +++++++<br> tests/test&#95;delivery.py             &#124;  93 +++++++++++++++<br> tests/test&#95;history&#95;comparison.py   &#124;  38 ++++++<br> tests/test&#95;lab&#95;report.py           &#124; 134 +++++++++++++++++++++<br> tests/test&#95;publish&#95;snapshot.py     &#124;  12 ++<br> tests/test&#95;report&#95;center.py        &#124;  50 ++++++++<br> tests/test&#95;report&#95;collector.py     &#124;  55 +++++++++<br> tests/test&#95;report&#95;policy.py        &#124;  53 +++++++++<br> tests/test&#95;run&#95;history.py          &#124;  64 ++++++++++<br> tests/test&#95;transactional&#95;export.py &#124;  69 +++++++++++<br> tests/test&#95;triage.py               &#124;  54 +++++++++<br> tests/test&#95;unified&#95;export.py       &#124;  75 ++++++++++++<br> tests/test&#95;wider&#95;history.py        &#124;  48 ++++++++<br> 36 files changed, 2663 insertions(+)
+feat: independently download and verify published delivery snapshots<br><br> .github/workflows/buildmate.yml    &#124;  95 +++++++++++++++<br> .github/workflows/lab-check.yml    &#124; 155 ++++++++++++++++++++++++<br> AGENTS.md                          &#124;  21 ++++<br> README.md                          &#124;  77 ++++++++++++<br> build-config.json                  &#124;   1 +<br> docs/development-test.md           &#124;  12 ++<br> docs/report-center.md              &#124; 110 +++++++++++++++++<br> docs/verification-2026-10-29.md    &#124;  26 ++++<br> examples/report.html               &#124;  23 ++++<br> examples/report.md                 &#124;  12 ++<br> examples/tasks.json                &#124;   4 +<br> lab&#95;report.py                      &#124; 168 ++++++++++++++++++++++++++<br> report&#95;center.py                   &#124; 144 ++++++++++++++++++++++<br> report&#95;policy.json                 &#124;  11 ++<br> scripts/build&#95;bundle.py            &#124;  88 ++++++++++++++<br> scripts/publish&#95;report.cjs         &#124; 236 +++++++++++++++++++++++++++++++++++++<br> scripts/report&#95;policy.py           &#124;  30 +++++<br> scripts/run&#95;history.py             &#124; 236 +++++++++++++++++++++++++++++++++++++<br> scripts/run&#95;report.py              &#124;  78 ++++++++++++<br> scripts/self&#95;check.py              &#124;  14 +++<br> scripts/test&#95;publish&#95;report.cjs    &#124; 138 ++++++++++++++++++++++<br> scripts/triage.py                  &#124; 106 +++++++++++++++++<br> scripts/validate&#95;delivery.py       &#124; 138 ++++++++++++++++++++++<br> scripts/verify&#95;published.py        &#124; 115 ++++++++++++++++++<br> tests/test&#95;bundle.py               &#124;  42 +++++++<br> tests/test&#95;delivery.py             &#124;  93 +++++++++++++++<br> tests/test&#95;history&#95;comparison.py   &#124;  38 ++++++<br> tests/test&#95;lab&#95;report.py           &#124; 134 +++++++++++++++++++++<br> tests/test&#95;publish&#95;snapshot.py     &#124;  12 ++<br> tests/test&#95;published&#95;download.py   &#124;  53 +++++++++<br> tests/test&#95;report&#95;center.py        &#124;  50 ++++++++<br> tests/test&#95;report&#95;collector.py     &#124;  55 +++++++++<br> tests/test&#95;report&#95;policy.py        &#124;  53 +++++++++<br> tests/test&#95;run&#95;history.py          &#124;  64 ++++++++++<br> tests/test&#95;transactional&#95;export.py &#124;  69 +++++++++++<br> tests/test&#95;triage.py               &#124;  54 +++++++++<br> tests/test&#95;unified&#95;export.py       &#124;  75 ++++++++++++<br> tests/test&#95;wider&#95;history.py        &#124;  48 ++++++++<br> 38 files changed, 2878 insertions(+)
 
 报告来自本次实际测试。跳过不计为通过；下载文件位于任务页底部 Artifacts。

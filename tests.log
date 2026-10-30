@@ -35,6 +35,12 @@ test_duplicate (test_lab_report.ReportTests.test_duplicate) ... ok
 test_empty_is_not_pass (test_lab_report.ReportTests.test_empty_is_not_pass) ... ok
 test_mixed (test_lab_report.ReportTests.test_mixed) ... ok
 test_snapshot_validation_and_publication_guards (test_publish_snapshot.PublishSnapshotTests.test_snapshot_validation_and_publication_guards) ... ok
+test_contents_api_verifies_git_blob_hash (test_published_download.PublishedDownloadTests.test_contents_api_verifies_git_blob_hash) ... ok
+test_corrupt_remote_bytes_rejected (test_published_download.PublishedDownloadTests.test_corrupt_remote_bytes_rejected) ... ok
+test_large_file_metadata_uses_git_blob_fallback (test_published_download.PublishedDownloadTests.test_large_file_metadata_uses_git_blob_fallback) ... ok
+test_mutable_ref_and_unapproved_filename_rejected (test_published_download.PublishedDownloadTests.test_mutable_ref_and_unapproved_filename_rejected) ... ok
+test_real_bundle_round_trip (test_published_download.PublishedDownloadTests.test_real_bundle_round_trip) ... ok
+test_wrong_source_or_run_rejected (test_published_download.PublishedDownloadTests.test_wrong_source_or_run_rejected) ... ok
 test_context_validation (test_report_center.CenterTests.test_context_validation) ... ok
 test_escape_all_fields (test_report_center.CenterTests.test_escape_all_fields) ... ok
 test_export (test_report_center.CenterTests.test_export) ... ok
@@ -88,6 +94,6 @@ test_scan_bounded_and_current_excluded (test_wider_history.WiderHistoryTests.tes
 test_unresolved_failure_gets_priority_over_resolved_history (test_wider_history.WiderHistoryTests.test_unresolved_failure_gets_priority_over_resolved_history) ... ok
 
 ----------------------------------------------------------------------
-Ran 88 tests in 2.990s
+Ran 94 tests in 1.301s
 
 OK

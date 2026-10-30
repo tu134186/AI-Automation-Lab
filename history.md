@@ -1,6 +1,6 @@
 ## 待处理清单
 
-覆盖本次已扫描的 25 次历史运行（最多 100 次）；不代表整个仓库全部故障。
+覆盖本次已扫描的 26 次历史运行（最多 100 次）；不代表整个仓库全部故障。
 
 排查方向依据失败步骤名称，不是已确认根因；未自动重试或修改历史任务。
 
@@ -14,12 +14,23 @@
   [原任务证据](https://github.com/tu134186/AI-Automation-Lab/actions/runs/40893017732)
 ## 最近云端任务
 
-已扫描本仓库最近 25 次运行（最多 100 次）；列表仅展示最近 10 次；统计与待处理覆盖扫描范围；排除本次运行，不是实时监控。
+已扫描本仓库最近 26 次运行（最多 100 次）；列表仅展示最近 10 次；统计与待处理覆盖扫描范围；排除本次运行，不是实时监控。
 
-采集时间（UTC）：2026-10-30T01:14:16.838833+00:00
+采集时间（UTC）：2026-10-30T01:22:24.942614+00:00
 
-有效结果：25 · 通过：21 · 失败：4 · 成功率：84.0%
+有效结果：26 · 通过：22 · 失败：4 · 成功率：84.6%
 未计入成功率：0。取消、跳过、等待和未知结论不计入分母。
+
+### Automation Lab Check · 通过
+
+- 任务：[40984599777](https://github.com/tu134186/AI-Automation-Lab/actions/runs/40984599777)
+- 分支：feature/report-center-20261029
+- Commit：78f6e9cb8d89e6a7e2eea892bc49c511714fa838
+- 启动时间（UTC）：2026-10-30T01:14:06Z
+- 同工作流、同分支最近有效结果对比：持续通过
+- [对比的上次任务](https://github.com/tu134186/AI-Automation-Lab/actions/runs/40984006959)
+- <a href="https://github.com/tu134186/AI-Automation-Lab/actions/runs/40984599777/artifacts/12946950053">下载：complete-delivery-78f6e9cb8d89e6a7e2eea892bc49c511714fa838</a>
+- <a href="https://github.com/tu134186/AI-Automation-Lab/actions/runs/40984599777/artifacts/12945809729">下载：report-center-78f6e9cb8d89e6a7e2eea892bc49c511714fa838</a>
 
 ### Automation Lab Check · 通过
 
@@ -73,8 +84,7 @@
 - 启动时间（UTC）：2026-10-29T15:55:30Z
 - 同工作流、同分支最近有效结果对比：持续通过
 - [对比的上次任务](https://github.com/tu134186/AI-Automation-Lab/actions/runs/40905190833)
-- <a href="https://github.com/tu134186/AI-Automation-Lab/actions/runs/40906435447/artifacts/12912645216">下载：report-center-498ca48d53bb4280afcf8b1b426f33a12a9f60f0</a>
-- <a href="https://github.com/tu134186/AI-Automation-Lab/actions/runs/40906435447/artifacts/12911158193">下载：complete-delivery-498ca48d53bb4280afcf8b1b426f33a12a9f60f0</a>
+- 本次只查询最近 5 个已完成任务的产物。
 
 ### Automation Lab Check · 通过
 
@@ -114,15 +124,5 @@
 - 启动时间（UTC）：2026-10-29T15:33:53Z
 - 同工作流、同分支最近有效结果对比：持续通过
 - [对比的上次任务](https://github.com/tu134186/AI-Automation-Lab/actions/runs/40902032645)
-- 本次只查询最近 5 个已完成任务的产物。
-
-### Automation Lab Check · 通过
-
-- 任务：[40902032645](https://github.com/tu134186/AI-Automation-Lab/actions/runs/40902032645)
-- 分支：feature/report-center-20261029
-- Commit：0f70e3f04075983299c95404f5958dd9640876e0
-- 启动时间（UTC）：2026-10-29T15:29:08Z
-- 同工作流、同分支最近有效结果对比：持续通过
-- [对比的上次任务](https://github.com/tu134186/AI-Automation-Lab/actions/runs/40901330035)
 - 本次只查询最近 5 个已完成任务的产物。
 
