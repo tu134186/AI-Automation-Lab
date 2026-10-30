@@ -1,0 +1,181 @@
+name: Automation Lab Check
+on:
+  workflow_dispatch:
+  push:
+    branches: ['feature/report-center-20261029']
+    paths: ['report_policy.json', 'report_center.py', 'lab_report.py', 'scripts/**', 'tests/**', '.github/workflows/lab-check.yml']
+  pull_request:
+    types: [opened, reopened, ready_for_review]
+    paths: ['AGENTS.md', 'scripts/**', 'report_policy.json', 'report_center.py', 'lab_report.py', 'tests/**', 'examples/**', '.github/workflows/lab-check.yml']
+concurrency:
+  group: lab-check-${{ github.ref }}
+  cancel-in-progress: true
+permissions:
+  contents: read
+  actions: read
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Run tests and export real reports
+        run: python3 scripts/run_report.py
+      - name: Collect recent runs, failure steps and downloads
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 scripts/run_history.py
+      - name: Publish Chinese report in task summary
+        if: always()
+        run: |
+          if [ -f reports/report.md ]; then
+            cat reports/report.md >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo '报告生成中断，请查看本任务失败日志，不能判断为通过。' >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - name: Publish recent task history
+        if: always()
+        run: |
+          if [ -f reports/history-error.md ]; then
+            cat reports/history-error.md >> "$GITHUB_STEP_SUMMARY"
+          elif [ -f reports/history.md ]; then
+            cat reports/history.md >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - name: Package exact source
+        if: always()
+        run: git archive --format=zip -o "reports/AI-Automation-Lab-${GITHUB_SHA:0:7}-source.zip" HEAD
+      - name: Validate delivery data and source identity
+        if: always()
+        id: delivery
+        run: |
+          python3 scripts/validate_delivery.py reports
+          python3 scripts/validate_delivery.py reports --verify
+      - name: Publish delivery validation result
+        if: always()
+        env:
+          DELIVERY_OUTCOME: ${{ steps.delivery.outcome }}
+        run: |
+          if [ "$DELIVERY_OUTCOME" = "success" ]; then
+            cat reports/delivery.md >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo '## 交付校验未通过' >> "$GITHUB_STEP_SUMMARY"
+            echo '下载内容仅供排查，请查看校验步骤日志；不能视为已验证交付包。' >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - name: Build and independently verify complete offline ZIP
+        run: python3 scripts/build_bundle.py reports delivery-bundle --commit "$GITHUB_SHA" --run-id "$GITHUB_RUN_ID"
+      - name: Upload complete delivery ZIP
+        id: bundle_upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: complete-delivery-${{ github.sha }}
+          path: delivery-bundle/
+          retention-days: 30
+          if-no-files-found: error
+      - name: Upload reports, test log and source
+        if: always()
+        id: upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: report-center-${{ github.sha }}
+          path: reports/
+          retention-days: 30
+          if-no-files-found: error
+      - name: Add direct download entry
+        if: always() && steps.upload.outcome == 'success'
+        env:
+          ARTIFACT_URL: ${{ steps.upload.outputs.artifact-url }}
+        run: |
+          printf '\n[下载 HTML、JSON、Markdown、测试日志和本次源码](%s)\n' "$ARTIFACT_URL" >> "$GITHUB_STEP_SUMMARY"
+
+  publish_snapshot:
+    needs: report
+    outputs:
+      snapshot_sha: ${{ steps.save_snapshot.outputs.snapshot_sha }}
+    if: github.ref == 'refs/heads/feature/report-center-20261029'
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: report-center-${{ github.sha }}
+          path: downloaded-report
+      - uses: actions/download-artifact@v4
+        with:
+          name: complete-delivery-${{ github.sha }}
+          path: downloaded-bundle
+      - name: Verify hashes and save snapshot to isolated report branch
+        id: save_snapshot
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const {publish} = require('./scripts/publish_report.cjs');
+            await publish({github,context,core});
+
+  verify_download:
+    needs: [report, publish_snapshot]
+    if: github.ref == 'refs/heads/feature/report-center-20261029'
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Download pinned remote package and verify offline contents
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SNAPSHOT_SHA: ${{ needs.publish_snapshot.outputs.snapshot_sha }}
+        run: python3 scripts/verify_published.py --source "$GITHUB_SHA" --snapshot "$SNAPSHOT_SHA" --run-id "$GITHUB_RUN_ID"
+      - name: Publish download verification result
+        if: always()
+        run: |
+          if [ -f verification/download-verification.md ]; then
+            cat verification/download-verification.md >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo '下载回读验收中断，没有可用的验收结果，请查看步骤日志。' >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: download-verification-${{ github.sha }}
+          path: verification/
+          retention-days: 30
+          if-no-files-found: error
+
+  record_receipt:
+    needs: [publish_snapshot, verify_download]
+    if: github.ref == 'refs/heads/feature/report-center-20261029'
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: download-verification-${{ github.sha }}
+          path: downloaded-verification
+      - name: Bind receipt to published package and persist it
+        uses: actions/github-script@v7
+        env:
+          VERIFIED_SNAPSHOT_SHA: ${{ needs.publish_snapshot.outputs.snapshot_sha }}
+        with:
+          script: |
+            const {recordReceipt} = require('./scripts/record_receipt.cjs');
+            await recordReceipt({github,context,core});
