@@ -153,3 +153,29 @@ jobs:
           path: verification/
           retention-days: 30
           if-no-files-found: error
+
+  record_receipt:
+    needs: [publish_snapshot, verify_download]
+    if: github.ref == 'refs/heads/feature/report-center-20261029'
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: download-verification-${{ github.sha }}
+          path: downloaded-verification
+      - name: Bind receipt to published package and persist it
+        uses: actions/github-script@v7
+        env:
+          VERIFIED_SNAPSHOT_SHA: ${{ needs.publish_snapshot.outputs.snapshot_sha }}
+        with:
+          script: |
+            const {recordReceipt} = require('./scripts/record_receipt.cjs');
+            await recordReceipt({github,context,core});

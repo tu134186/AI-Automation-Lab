@@ -132,6 +132,8 @@ function renderOverview(report, history, diagnosis, snapshot, deliveries=[]) {
   const paused = diagnosis.paused || [];
   if (!Array.isArray(paused)) throw new Error('Invalid paused evidence');
   const lines = ['# 报告中心 · 手机总览','',
+    '<!-- DOWNLOAD_RECEIPT_START -->','**发布后下载回读：待验收**',
+    '本快照已完成生成与发布校验，独立回读结果尚未登记。','<!-- DOWNLOAD_RECEIPT_END -->','',
     '## 已保存的核验快照','',
     '| 项目 | 结果 |','| --- | --- |',
     '| 本次自动检查 | 全部通过，共 ' + report.total + ' 项 |',
