@@ -39,7 +39,9 @@ jobs:
       - name: Publish recent task history
         if: always()
         run: |
-          if [ -f reports/history.md ]; then
+          if [ -f reports/history-error.md ]; then
+            cat reports/history-error.md >> "$GITHUB_STEP_SUMMARY"
+          elif [ -f reports/history.md ]; then
             cat reports/history.md >> "$GITHUB_STEP_SUMMARY"
           fi
       - name: Package exact source

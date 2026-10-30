@@ -14,6 +14,7 @@ sys.path.insert(0, str(ROOT))
 from report_center import escape_md
 from scripts.triage import build_triage, render_md as triage_md, render_html as triage_html
 from scripts.report_policy import normalize_policy, load_policy
+from lab_report import write_reports
 
 REPOSITORY = "tu134186/AI-Automation-Lab"
 LABELS = {"success": "通过", "failure": "失败", "cancelled": "已取消",
@@ -171,9 +172,33 @@ def html_section(data):
     m = data["metrics"]
     rate = "暂无有效结果" if m["success_rate"] is None else str(m["success_rate"]) + "%"
     overview = f'<p>有效结果 {m["measurable"]} · 通过 {m["passed"]} · 失败 {m["failed"]} · 成功率 {rate}</p><p class="meta">取消、跳过、等待和未知结论不计入成功率；只比较同工作流、同分支在当前快照内的有效结果。</p>'
-    return (triage_html(data["triage"]) + '<section><h2>最近云端任务</h2>' + overview + '<p class="meta">'
+    return ('<!-- REPORT_HISTORY_START -->' + triage_html(data["triage"]) + '<section><h2>最近云端任务</h2>' + overview + '<p class="meta">'
             + esc(data["scope"]) + "<br>采集时间（UTC）：" + esc(data["collected_at"]) + "</p>"
-            + ("".join(rows) or "<p>没有返回历史任务，不能判断为全部通过。</p>") + "</section>")
+            + ("".join(rows) or "<p>没有返回历史任务，不能判断为全部通过。</p>") + "</section><!-- REPORT_HISTORY_END -->")
+
+def attach_history(page, data):
+    start, end = "<!-- REPORT_HISTORY_START -->", "<!-- REPORT_HISTORY_END -->"
+    if page.count(start) != page.count(end) or page.count(start) > 1:
+        raise ValueError("HTML 历史区块标记不完整或重复")
+    if start in page:
+        left, remainder = page.split(start, 1)
+        if end not in remainder:
+            raise ValueError("HTML 历史区块顺序不正确")
+        page = left + remainder.split(end, 1)[1]
+    if page.count("<footer>") != 1:
+        raise ValueError("HTML 报告缺少唯一页脚")
+    return page.replace("<footer>", html_section(data) + "<footer>", 1)
+
+def export_history(data, root):
+    root = Path(root)
+    outputs = [(root / "diagnosis.json", json.dumps(data["triage"], ensure_ascii=False, indent=2)),
+               (root / "diagnosis.md", triage_md(data["triage"])),
+               (root / "history.json", json.dumps(data, ensure_ascii=False, indent=2)),
+               (root / "history.md", markdown(data))]
+    page = root / "report.html"
+    if page.exists():
+        outputs.append((page, attach_history(page.read_text(encoding="utf-8"), data)))
+    write_reports(outputs)
 
 def main():
     root = ROOT / "reports"
@@ -193,19 +218,16 @@ def main():
         print(f"History scanned={data['scanned_count']} visible={len(data['runs'])} pending={len(data['triage']['items'])}")
         print("Pending evidence run IDs:", ",".join(str(x["id"]) for x in data["triage"]["items"]) or "none")
         print("Paused evidence run IDs:", ",".join(str(x["id"]) for x in data["triage"]["paused"]) or "none")
-        (root / "diagnosis.json").write_text(json.dumps(data["triage"], ensure_ascii=False, indent=2), encoding="utf-8")
-        (root / "diagnosis.md").write_text(triage_md(data["triage"]), encoding="utf-8")
-        (root / "history.json").write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
-        (root / "history.md").write_text(markdown(data), encoding="utf-8")
-        page = root / "report.html"
-        if page.exists():
-            page.write_text(page.read_text(encoding="utf-8").replace("<footer>", html_section(data) + "<footer>", 1),
-                            encoding="utf-8")
+        export_history(data, root)
+        (root / "history-error.md").unlink(missing_ok=True)
         return 0
     except (HTTPError, URLError, OSError, ValueError) as error:
         label = f"HTTP {error.code}" if isinstance(error, HTTPError) else type(error).__name__
-        (root / "history.md").write_text("## 历史采集失败\n\n" + label
-                                        + "。本次未取得有效历史数据，请查看任务日志。\n", encoding="utf-8")
+        try:
+            write_reports([(root / "history-error.md", "## 历史采集失败\n\n" + label
+                            + "。历史和诊断文件未完成更新，请查看任务日志；保留的旧快照不能视为本次结果。\n")])
+        except (OSError, ValueError):
+            print("Unable to save history error note; original reports were not replaced by an error note.", file=sys.stderr)
         print("History collection failed: " + label, file=sys.stderr)
         return 1
 

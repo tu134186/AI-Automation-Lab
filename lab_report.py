@@ -91,11 +91,16 @@ def write_reports(outputs):
     staged = []
     committed = []
     preserve_backups = False
+    targets = []
     try:
         for path, text in outputs:
             target = path.resolve()
             if target.exists() and not target.is_file():
                 raise ValueError("output must be a regular file")
+            for previous in targets:
+                if target == previous or (target.exists() and previous.exists() and target.samefile(previous)):
+                    raise ValueError("output paths must not alias one another")
+            targets.append(target)
             descriptor, temporary = tempfile.mkstemp(prefix=".lab-report-", dir=target.parent)
             os.close(descriptor)
             entry = {"target": target, "staged": Path(temporary), "backup": None}

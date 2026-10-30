@@ -1,6 +1,7 @@
 """Chinese, dependency-free CI report renderer; legacy lab_report stays compatible."""
 import html
 import json
+from lab_report import write_reports
 from collections import Counter
 from urllib.parse import urlsplit
 
@@ -136,7 +137,8 @@ def export(records, context, output):
     root = Path(output)
     root.mkdir(parents=True, exist_ok=True)
     report = build_report(records, context)
-    (root / "report.json").write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
-    (root / "report.md").write_text(render_markdown(report), encoding="utf-8")
-    (root / "report.html").write_text(render_html(report), encoding="utf-8")
+    write_reports([(root / "report.json", json.dumps(report, ensure_ascii=False, indent=2)),
+                   (root / "report.md", render_markdown(report)),
+                   (root / "report.html", render_html(report))])
     return report
+
