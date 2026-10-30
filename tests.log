@@ -88,6 +88,6 @@ test_scan_bounded_and_current_excluded (test_wider_history.WiderHistoryTests.tes
 test_unresolved_failure_gets_priority_over_resolved_history (test_wider_history.WiderHistoryTests.test_unresolved_failure_gets_priority_over_resolved_history) ... ok
 
 ----------------------------------------------------------------------
-Ran 88 tests in 1.095s
+Ran 88 tests in 2.990s
 
 OK

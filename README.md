@@ -7,12 +7,12 @@
 | 本次自动检查 | 全部通过，共 89 项 |
 | 历史待处理 | 0 项，独立于本次检查结果 |
 | 已暂停实验 | 1 项，保留原结论，不计为修复 |
-| 历史扫描 | 24 次 |
-| 快照更新时间 | 2026/10/30 09:08:39（北京时间） |
+| 历史扫描 | 25 次 |
+| 快照更新时间 | 2026/10/30 09:14:26（北京时间） |
 
-源码 Commit：353caf3817ad48b74a7288ce11208fcd245656cb
+源码 Commit：78f6e9cb8d89e6a7e2eea892bc49c511714fa838
 
-[本快照对应任务](https://github.com/tu134186/AI-Automation-Lab/actions/runs/40984006959) · [核验说明](delivery.md)
+[本快照对应任务](https://github.com/tu134186/AI-Automation-Lab/actions/runs/40984599777) · [核验说明](delivery.md)
 
 ## 当前任务状态
 
@@ -30,6 +30,12 @@
   原始结果：failure，暂停不代表通过或已修复。
   [原任务证据](https://github.com/tu134186/AI-Automation-Lab/actions/runs/40893017732)
 
+## 历史交付包
+
+下面的链接锁定报告归档 Commit，后续更新最新入口不会改变这些链接对应的旧包。
+
+- [源码 353caf3 · 2026/10/30 09:08（北京时间）](https://github.com/tu134186/AI-Automation-Lab/raw/9f6d0ddc4c3c90611fb68a8aacd3a6bf62199bc9/complete-delivery.zip)
+
 ## 查看与下载
 
 - [下载完整交付包：报告、诊断、日志、校验清单和源码](complete-delivery.zip)
@@ -37,7 +43,7 @@
 - [完整中文报告](report.md)
 - [待处理清单](diagnosis.md)
 - [历史任务与产物入口](history.md)
-- [下载对应源码 ZIP](AI-Automation-Lab-353caf3-source.zip)
+- [下载对应源码 ZIP](AI-Automation-Lab-78f6e9c-source.zip)
 - [文件校验清单](SHA256SUMS.txt)
 
 本分支保存快照，不受 Actions 产物保留期限制；删除仓库、分支或文件后仍会丢失。主分支未因报告发布而修改。
