@@ -12,14 +12,14 @@
     ]
   },
   "metrics": {
-    "measurable": 26,
-    "passed": 22,
+    "measurable": 27,
+    "passed": 23,
     "failed": 4,
-    "success_rate": 84.6,
+    "success_rate": 85.2,
     "excluded": 0
   },
   "triage": {
-    "scope": "覆盖本次已扫描的 26 次历史运行（最多 100 次）；不代表整个仓库全部故障。",
+    "scope": "覆盖本次已扫描的 27 次历史运行（最多 100 次）；不代表整个仓库全部故障。",
     "evidence_note": "排查方向依据失败步骤名称，不是已确认根因；未自动重试或修改历史任务。",
     "items": [],
     "paused": [
@@ -50,10 +50,42 @@
       }
     ]
   },
-  "collected_at": "2026-10-30T01:22:24.942614+00:00",
-  "scope": "已扫描本仓库最近 26 次运行（最多 100 次）；列表仅展示最近 10 次；统计与待处理覆盖扫描范围；排除本次运行，不是实时监控。",
-  "scanned_count": 26,
+  "collected_at": "2026-10-30T01:32:07.313820+00:00",
+  "scope": "已扫描本仓库最近 27 次运行（最多 100 次）；列表仅展示最近 10 次；统计与待处理覆盖扫描范围；排除本次运行，不是实时监控。",
+  "scanned_count": 27,
   "scanned_runs": [
+    {
+      "id": 40985436554,
+      "name": "Automation Lab Check",
+      "workflow_key": "400632890",
+      "workflow_path": ".github/workflows/lab-check.yml",
+      "state": "通过",
+      "status": "completed",
+      "conclusion": "success",
+      "branch": "feature/report-center-20261029",
+      "commit": "7d64668a2197028edb11961e24d8523ad6cf6b8d",
+      "created_at": "2026-10-30T01:22:14Z",
+      "url": "https://github.com/tu134186/AI-Automation-Lab/actions/runs/40985436554",
+      "failed_steps": [],
+      "log_links": [],
+      "artifacts": [
+        {
+          "name": "report-center-7d64668a2197028edb11961e24d8523ad6cf6b8d",
+          "url": "https://github.com/tu134186/AI-Automation-Lab/actions/runs/40985436554/artifacts/12947380090"
+        },
+        {
+          "name": "download-verification-7d64668a2197028edb11961e24d8523ad6cf6b8d",
+          "url": "https://github.com/tu134186/AI-Automation-Lab/actions/runs/40985436554/artifacts/12946577402"
+        },
+        {
+          "name": "complete-delivery-7d64668a2197028edb11961e24d8523ad6cf6b8d",
+          "url": "https://github.com/tu134186/AI-Automation-Lab/actions/runs/40985436554/artifacts/12946478166"
+        }
+      ],
+      "notes": [],
+      "comparison": "持续通过",
+      "previous_run_url": "https://github.com/tu134186/AI-Automation-Lab/actions/runs/40984599777"
+    },
     {
       "id": 40984599777,
       "name": "Automation Lab Check",
@@ -180,17 +212,10 @@
       "url": "https://github.com/tu134186/AI-Automation-Lab/actions/runs/40908241267",
       "failed_steps": [],
       "log_links": [],
-      "artifacts": [
-        {
-          "name": "complete-delivery-4d1beaa09d927da20480485ca1fe24f9ad291117",
-          "url": "https://github.com/tu134186/AI-Automation-Lab/actions/runs/40908241267/artifacts/12912990826"
-        },
-        {
-          "name": "report-center-4d1beaa09d927da20480485ca1fe24f9ad291117",
-          "url": "https://github.com/tu134186/AI-Automation-Lab/actions/runs/40908241267/artifacts/12911852976"
-        }
+      "artifacts": [],
+      "notes": [
+        "本次只查询最近 5 个已完成任务的产物。"
       ],
-      "notes": [],
       "comparison": "持续通过",
       "previous_run_url": "https://github.com/tu134186/AI-Automation-Lab/actions/runs/40906435447"
     },
@@ -660,6 +685,38 @@
   ],
   "runs": [
     {
+      "id": 40985436554,
+      "name": "Automation Lab Check",
+      "workflow_key": "400632890",
+      "workflow_path": ".github/workflows/lab-check.yml",
+      "state": "通过",
+      "status": "completed",
+      "conclusion": "success",
+      "branch": "feature/report-center-20261029",
+      "commit": "7d64668a2197028edb11961e24d8523ad6cf6b8d",
+      "created_at": "2026-10-30T01:22:14Z",
+      "url": "https://github.com/tu134186/AI-Automation-Lab/actions/runs/40985436554",
+      "failed_steps": [],
+      "log_links": [],
+      "artifacts": [
+        {
+          "name": "report-center-7d64668a2197028edb11961e24d8523ad6cf6b8d",
+          "url": "https://github.com/tu134186/AI-Automation-Lab/actions/runs/40985436554/artifacts/12947380090"
+        },
+        {
+          "name": "download-verification-7d64668a2197028edb11961e24d8523ad6cf6b8d",
+          "url": "https://github.com/tu134186/AI-Automation-Lab/actions/runs/40985436554/artifacts/12946577402"
+        },
+        {
+          "name": "complete-delivery-7d64668a2197028edb11961e24d8523ad6cf6b8d",
+          "url": "https://github.com/tu134186/AI-Automation-Lab/actions/runs/40985436554/artifacts/12946478166"
+        }
+      ],
+      "notes": [],
+      "comparison": "持续通过",
+      "previous_run_url": "https://github.com/tu134186/AI-Automation-Lab/actions/runs/40984599777"
+    },
+    {
       "id": 40984599777,
       "name": "Automation Lab Check",
       "workflow_key": "400632890",
@@ -785,17 +842,10 @@
       "url": "https://github.com/tu134186/AI-Automation-Lab/actions/runs/40908241267",
       "failed_steps": [],
       "log_links": [],
-      "artifacts": [
-        {
-          "name": "complete-delivery-4d1beaa09d927da20480485ca1fe24f9ad291117",
-          "url": "https://github.com/tu134186/AI-Automation-Lab/actions/runs/40908241267/artifacts/12912990826"
-        },
-        {
-          "name": "report-center-4d1beaa09d927da20480485ca1fe24f9ad291117",
-          "url": "https://github.com/tu134186/AI-Automation-Lab/actions/runs/40908241267/artifacts/12911852976"
-        }
+      "artifacts": [],
+      "notes": [
+        "本次只查询最近 5 个已完成任务的产物。"
       ],
-      "notes": [],
       "comparison": "持续通过",
       "previous_run_url": "https://github.com/tu134186/AI-Automation-Lab/actions/runs/40906435447"
     },
@@ -882,27 +932,6 @@
       ],
       "comparison": "持续通过",
       "previous_run_url": "https://github.com/tu134186/AI-Automation-Lab/actions/runs/40902839617"
-    },
-    {
-      "id": 40902839617,
-      "name": "Automation Lab Check",
-      "workflow_key": "400632890",
-      "workflow_path": ".github/workflows/lab-check.yml",
-      "state": "通过",
-      "status": "completed",
-      "conclusion": "success",
-      "branch": "feature/report-center-20261029",
-      "commit": "b8938edf68f978881d328e62a79e9efbb14746d9",
-      "created_at": "2026-10-29T15:33:53Z",
-      "url": "https://github.com/tu134186/AI-Automation-Lab/actions/runs/40902839617",
-      "failed_steps": [],
-      "log_links": [],
-      "artifacts": [],
-      "notes": [
-        "本次只查询最近 5 个已完成任务的产物。"
-      ],
-      "comparison": "持续通过",
-      "previous_run_url": "https://github.com/tu134186/AI-Automation-Lab/actions/runs/40902032645"
     }
   ]
 }

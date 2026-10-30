@@ -41,6 +41,7 @@ test_large_file_metadata_uses_git_blob_fallback (test_published_download.Publish
 test_mutable_ref_and_unapproved_filename_rejected (test_published_download.PublishedDownloadTests.test_mutable_ref_and_unapproved_filename_rejected) ... ok
 test_real_bundle_round_trip (test_published_download.PublishedDownloadTests.test_real_bundle_round_trip) ... ok
 test_wrong_source_or_run_rejected (test_published_download.PublishedDownloadTests.test_wrong_source_or_run_rejected) ... ok
+test_persistent_receipt_validation_and_write_scope (test_receipt.ReceiptTests.test_persistent_receipt_validation_and_write_scope) ... ok
 test_context_validation (test_report_center.CenterTests.test_context_validation) ... ok
 test_escape_all_fields (test_report_center.CenterTests.test_escape_all_fields) ... ok
 test_export (test_report_center.CenterTests.test_export) ... ok
@@ -94,6 +95,6 @@ test_scan_bounded_and_current_excluded (test_wider_history.WiderHistoryTests.tes
 test_unresolved_failure_gets_priority_over_resolved_history (test_wider_history.WiderHistoryTests.test_unresolved_failure_gets_priority_over_resolved_history) ... ok
 
 ----------------------------------------------------------------------
-Ran 94 tests in 1.301s
+Ran 95 tests in 1.566s
 
 OK
